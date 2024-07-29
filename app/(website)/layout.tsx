@@ -14,7 +14,7 @@ async function sharedMetaData(params) {
     title: {
       default:
         settings?.title,
-      template: "%s | Stablo"
+      template: "%s | Frontendpedia"
     },
     description:
       settings?.description,

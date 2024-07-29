@@ -75,7 +75,7 @@ export default function Navbar(props) {
                       />
                     ) : (
                       <span className="block text-center">
-                        Stablo
+                        Frontendpedia
                       </span>
                     )}
                   </Link>
@@ -89,7 +89,7 @@ export default function Navbar(props) {
                       />
                     ) : (
                       <span className="block text-center">
-                        Stablo
+                        Frontendpedia
                       </span>
                     )}
                   </Link>

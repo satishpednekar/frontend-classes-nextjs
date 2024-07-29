@@ -1,23 +1,17 @@
 import "@/styles/tailwind.css";
 import { Providers } from "./providers";
 import { cx } from "@/utils/all";
-import { Inter, Lora, Alata } from "next/font/google";
+import { Inter, Noto_Sans } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter"
 });
 
-const lora = Lora({
+const noto = Noto_Sans({
   subsets: ["latin"],
-  variable: "--font-lora"
-});
-
-const alata = Alata({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-alata",
-  display: "swap"
+  display: "swap",
+  variable: "--font-alata"
 });
 
 export default function RootLayout({
@@ -29,7 +23,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cx(alata.variable, inter.variable)}>
+      className={cx(noto.variable, inter.variable)}>
       <body className="antialiased text-gray-800 dark:bg-black dark:text-gray-400">
         <Providers>{children}</Providers>
       </body>
