@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/react"
+
 import { getSettings } from "@/lib/sanity/client";
 import Footer from "@/components/footer";
 import { urlForImage } from "@/lib/sanity/image";
@@ -8,18 +10,16 @@ async function sharedMetaData(params) {
 
   return {
     // enable this for resolving opengraph image
-    // metadataBase: new URL(settings.url),
+    metadataBase: new URL(settings.url),
     title: {
       default:
-        settings?.title ||
-        "Stablo - Blog Template for Next.js & Sanity CMS",
+        settings?.title,
       template: "%s | Stablo"
     },
     description:
-      settings?.description ||
-      "Stablo - popular open-source next.js and sanity blog template",
-    keywords: ["Next.js", "Sanity", "Tailwind CSS"],
-    authors: [{ name: "Surjith" }],
+      settings?.description,
+    keywords: ["JavaScript", "HTML", "CSS", "Frontend", "Web Development", "Generative AI frontend development"],
+    authors: [{ name: "Frontendpedia" }],
     canonical: settings?.url,
     openGraph: {
       images: [
@@ -33,7 +33,7 @@ async function sharedMetaData(params) {
       ]
     },
     twitter: {
-      title: settings?.title || "Stablo Template",
+      title: settings?.title,
       card: "summary_large_image"
     },
     robots: {

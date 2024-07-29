@@ -10,10 +10,10 @@ export default function About({ authors, settings }) {
         About
       </h1>
       <div className="text-center">
-        <p className="text-lg">We are a small passionate team.</p>
+        <p className="text-lg">Your premier destination for mastering the art of frontend web development</p>
       </div>
 
-      <div className="mb-16 mt-6 grid grid-cols-3 gap-5 md:mb-32 md:mt-16 md:gap-16">
+      {/* <div className="mb-16 mt-6 grid grid-cols-3 gap-5 md:mb-32 md:mt-16 md:gap-16">
         {authors.slice(0, 3).map(author => {
           const imageProps = urlForImage(author?.image) || null;
           return (
@@ -34,23 +34,10 @@ export default function About({ authors, settings }) {
             </div>
           );
         })}
-      </div>
+      </div> */}
 
       <div className="prose mx-auto mt-14 text-center dark:prose-invert">
-        <p>
-          We provide real-time connectivity to enable software
-          providers and financial institutions to build integrated
-          products for their small business customers.
-        </p>
-        <p>
-          Our API infrastructure is leveraged by clients ranging from
-          lenders to corporate card providers and business forecasting
-          tools, with use cases including automatic reconciliation,
-          business dashboarding, and loan decisioning.
-        </p>
-        <p>
-          <Link href="/contact">Get in touch</Link>
-        </p>
+      FrontendPedia - Our curated collection of cutting-edge resources empowers developers of all levels to stay ahead in the rapidly evolving world of web technologies. Dive into comprehensive tutorials, expert insights, and practical guides covering HTML5, CSS3, JavaScript, and beyond. Discover the latest frameworks and libraries, from React and Vue to Angular and Svelte, and learn how to leverage them effectively in your projects. Explore responsive design techniques, accessibility best practices, and performance optimization strategies to create seamless user experiences across devices. Stay informed about emerging trends like Progressive Web Apps, WebAssembly, and JAMstack architecture. Sharpen your skills with hands-on coding challenges and real-world project examples. Whether you're a beginner taking your first steps or a seasoned pro looking to refine your craft, FrontendPedia offers the tools and knowledge you need to excel. Join our vibrant community of passionate developers, share your experiences, and collaborate on innovative solutions. Elevate your frontend development skills, boost your career prospects, and shape the future of the web with FrontendPedia – where learning never stops and creativity knows no bounds.
       </div>
     </Container>
   );
