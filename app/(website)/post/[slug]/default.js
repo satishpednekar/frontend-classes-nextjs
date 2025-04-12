@@ -90,8 +90,8 @@ export default function Post(props) {
       </div>
 
       <Container>
-        <article className="mx-auto max-w-screen-md ">
-          <div className="prose mx-auto my-3 dark:prose-invert prose-a:text-blue-600">
+        <article className="mx-auto max-w-screen-lg ">
+          <div className="prose max-w-screen-lg my-3 dark:prose-invert prose-a:text-blue-600">
             {post.body && <PortableText value={post.body} />}
           </div>
           <div className="mb-7 mt-7 flex justify-center">
