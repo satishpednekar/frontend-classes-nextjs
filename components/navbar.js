@@ -66,7 +66,7 @@ export default function Navbar(props) {
                 </div>
                 <div className="flex w-full items-center justify-between md:w-auto">
                   <Link href="/" className="w-40 dark:hidden">
-                    {props.logo ? (
+                    {props.logo && urlForImage(props.logo) ? (
                       <Image
                         {...urlForImage(props.logo)}
                         alt="Logo"
@@ -80,7 +80,7 @@ export default function Navbar(props) {
                     )}
                   </Link>
                   <Link href="/" className="hidden w-40 dark:block">
-                    {props.logoalt ? (
+                    {props.logoalt && urlForImage(props.logoalt) ? (
                       <Image
                         {...urlForImage(props.logoalt)}
                         alt="Logo"

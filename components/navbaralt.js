@@ -78,9 +78,9 @@ export default function NavbarAlt(props) {
               <div className="flex flex-wrap justify-between md:gap-10 lg:flex-nowrap">
                 <div className="flex w-full items-center justify-between lg:w-auto">
                   <Link href="/" className="w-28 dark:hidden">
-                    {props.logo ? (
+                    {props.logo && urlForImage(props.logo) ? (
                       <Image
-                        src={urlForImage(props.logo)}
+                        {...urlForImage(props.logo)}
                         alt="Logo"
                         priority={true}
                         sizes="(max-width: 640px) 100vw, 200px"
@@ -92,9 +92,9 @@ export default function NavbarAlt(props) {
                     )}
                   </Link>
                   <Link href="/" className="hidden w-28 dark:block">
-                    {props.logoalt ? (
+                    {props.logoalt && urlForImage(props.logoalt) ? (
                       <Image
-                        src={urlForImage(props.logoalt)}
+                        {...urlForImage(props.logoalt)}
                         alt="Logo"
                         priority={true}
                         sizes="(max-width: 640px) 100vw, 200px"
