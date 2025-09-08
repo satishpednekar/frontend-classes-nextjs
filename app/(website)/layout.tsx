@@ -1,4 +1,5 @@
 import { Analytics } from "@vercel/analytics/react"
+import Script from "next/script"
 
 import { getSettings } from "@/lib/sanity/client";
 import Footer from "@/components/footer";
@@ -51,6 +52,20 @@ export default async function Layout({ children, params }) {
   const settings = await getSettings();
   return (
     <>
+      {/* Google Analytics */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-HB34KD62K8"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HB34KD62K8');
+        `}
+      </Script>
+
       <Navbar {...settings} />
 
       <div>{children}</div>
