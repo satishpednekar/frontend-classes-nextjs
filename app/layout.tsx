@@ -3,6 +3,7 @@ import { Providers } from "./providers";
 import { cx } from "@/utils/all";
 import { Inter, Noto_Sans } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react"
 import LcpObserver from "@/components/LcpObserver";
 import type { Metadata } from 'next';
 
@@ -43,6 +44,7 @@ export default function RootLayout({
       <body className="antialiased text-gray-800 dark:bg-black dark:text-gray-400">
         <Providers>{children}</Providers>
         <SpeedInsights />
+        <Analytics />
         <LcpObserver />
       </body>
     </html>
