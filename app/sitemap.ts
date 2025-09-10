@@ -6,7 +6,7 @@ import {
 } from "@/lib/sanity/client";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.SITE_URL || "https://frontendpedia.com";
+  const baseUrl = process.env.SITE_URL || "https://www.frontendpedia.com";
 
   const [postEntries, categoryEntries, authorEntries] = await Promise.all([
     getAllPostsSlugs().catch(() => []),
