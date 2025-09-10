@@ -33,9 +33,6 @@ const client = projectId
       apiVersion,
       useCdn,
       perspective: 'published',
-      stega: {
-        enabled: false
-      },
       token: process.env.SANITY_API_TOKEN
     })
   : null;

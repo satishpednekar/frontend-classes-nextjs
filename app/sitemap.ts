@@ -8,11 +8,12 @@ import {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.SITE_URL || "https://www.frontendpedia.com";
 
-  const [postEntries, categoryEntries, authorEntries] = await Promise.all([
-    getAllPostsSlugs().catch(() => []),
-    getAllCategories().catch(() => []),
-    getAllAuthorsSlugs().catch(() => [])
-  ]);
+  try {
+    const [postEntries, categoryEntries, authorEntries] = await Promise.all([
+      getAllPostsSlugs().catch(() => []),
+      getAllCategories().catch(() => []),
+      getAllAuthorsSlugs().catch(() => [])
+    ]);
 
   const now = new Date();
 
@@ -20,7 +21,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/`, lastModified: now, changeFrequency: "daily", priority: 1 },
     { url: `${baseUrl}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/contact`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${baseUrl}/archive`, lastModified: now, changeFrequency: "weekly", priority: 0.5 }
+    { url: `${baseUrl}/archive`, lastModified: now, changeFrequency: "weekly", priority: 0.5 },
+    { url: `${baseUrl}/search`, lastModified: now, changeFrequency: "weekly", priority: 0.4 }
   ];
 
   const postRoutes: MetadataRoute.Sitemap = Array.isArray(postEntries)
@@ -56,6 +58,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }))
     : [];
 
-  return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...authorRoutes];
+    return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...authorRoutes];
+  } catch (error) {
+    console.error('Error generating sitemap:', error);
+    // Return basic sitemap if there's an error
+    return [
+      { url: `${baseUrl}/`, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
+      { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+      { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
+      { url: `${baseUrl}/archive`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.5 },
+      { url: `${baseUrl}/search`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.4 }
+    ];
+  }
 }
 
