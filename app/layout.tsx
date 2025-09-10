@@ -4,6 +4,7 @@ import { cx } from "@/utils/all";
 import { Inter, Noto_Sans } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import LcpObserver from "@/components/LcpObserver";
+import type { Metadata } from 'next';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,6 +16,19 @@ const noto = Noto_Sans({
   display: "swap",
   variable: "--font-alata"
 });
+
+export const metadata: Metadata = {
+  title: 'Frontendpedia',
+  description: 'Learn frontend development with comprehensive tutorials and guides',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.png', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+};
 
 export default function RootLayout({
   children
