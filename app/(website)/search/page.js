@@ -1,34 +1,30 @@
 import { Suspense } from "react";
 import Container from "@/components/container";
-import Archive from "./archive";
+import SearchResults from "./search-results";
 import Loading from "@/components/loading";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = 'force-no-store';
 export const revalidate = 0;
 
-export const runtime = "edge";
-
-export default async function ArchivePage({ searchParams }) {
+export default async function SearchPage({ searchParams }) {
   return (
     <>
       <Container className="relative">
         <h1 className="text-center text-3xl font-semibold tracking-tight dark:text-white lg:text-4xl lg:leading-snug">
-          Archive
+          Search
         </h1>
         <div className="text-center">
           <p className="mt-2 text-lg">
-            See all posts we have ever written.
+            Find posts by searching for keywords.
           </p>
         </div>
         <Suspense
-          key={searchParams.page || "1"}
+          key={searchParams.q || "empty"}
           fallback={<Loading />}>
-          <Archive searchParams={searchParams} />
+          <SearchResults searchParams={searchParams} />
         </Suspense>
       </Container>
     </>
   );
 }
-
-// export const revalidate = 60;

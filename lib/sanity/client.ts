@@ -32,7 +32,11 @@ const client = projectId
       dataset,
       apiVersion,
       useCdn,
-      perspective: 'published'
+      perspective: 'published',
+      stega: {
+        enabled: false
+      },
+      token: process.env.SANITY_API_TOKEN
     })
   : null;
 
@@ -53,7 +57,8 @@ export const fetcher = async ([query, params]) => {
 
 export async function getAllPosts() {
   if (client) {
-    return (await client.fetch(postquery)) || [];
+    const posts = await client.fetch(postquery);
+    return posts || [];
   }
   return [];
 }
@@ -128,12 +133,19 @@ export async function getTopCategories() {
 
 export async function getPaginatedPosts({ limit, pageIndex = 0 }) {
   if (client) {
-    return (
-      (await client.fetch(paginatedquery, {
-        pageIndex: pageIndex,
-        limit: limit
-      })) || []
-    );
+    const posts = await client.fetch(paginatedquery, {
+      pageIndex: pageIndex,
+      limit: limit
+    });
+    return posts || [];
+  }
+  return [];
+}
+
+export async function searchPosts(query) {
+  if (client && query) {
+    const posts = await client.fetch(searchquery, { query });
+    return posts || [];
   }
   return [];
 }
