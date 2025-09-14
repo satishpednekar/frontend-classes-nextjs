@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Container from "@/components/container";
 import SearchResults from "./search-results";
 import Loading from "@/components/loading";
+import Search from "@/components/search-simple";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = 'force-no-store';
@@ -19,6 +20,11 @@ export default async function SearchPage({ searchParams }) {
             Find posts by searching for keywords.
           </p>
         </div>
+        
+        <div className="mt-8 max-w-md mx-auto">
+          <Search />
+        </div>
+        
         <Suspense
           key={searchParams.q || "empty"}
           fallback={<Loading />}>
