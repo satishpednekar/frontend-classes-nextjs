@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Container from "@/components/container";
 import SearchResults from "./search-results";
 import Loading from "@/components/loading";
-import Search from "@/components/search-simple";
+import Search from "@/components/search";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = 'force-no-store';
