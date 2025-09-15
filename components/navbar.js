@@ -28,10 +28,6 @@ export default function Navbar(props) {
       href: "/contact"
     },
     {
-      label: "Archive",
-      href: "/archive"
-    },
-    {
       label: "Search",
       href: "/search"
     }
