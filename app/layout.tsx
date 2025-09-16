@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     shortcut: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
+  verification: {
+    yandex: '07e488dc1de89449',
+  },
 };
 
 export default function RootLayout({
