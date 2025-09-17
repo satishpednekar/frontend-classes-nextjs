@@ -32,6 +32,9 @@ export const metadata: Metadata = {
   verification: {
     yandex: '07e488dc1de89449',
   },
+  other: {
+    'google-adsense-account': 'ca-pub-3296825399852834',
+  },
 };
 
 export default function RootLayout({
