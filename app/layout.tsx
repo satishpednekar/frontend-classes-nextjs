@@ -5,6 +5,7 @@ import { Inter, Noto_Sans } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import LcpObserver from "@/components/LcpObserver";
+import Script from "next/script";
 import type { Metadata } from 'next';
 
 const inter = Inter({
@@ -47,6 +48,14 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={cx(noto.variable, inter.variable)}>
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3296825399852834"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className="antialiased text-gray-800 dark:bg-black dark:text-gray-400">
         <Providers>{children}</Providers>
         <SpeedInsights />
