@@ -28,6 +28,8 @@ const defaultSocialProfiles: string[] = [
 ];
 
 // Optional social profile URLs. Set any of these env vars to have them included automatically.
+const adminProfileUrl = (process.env.NEXT_PUBLIC_ADMIN_PROFILE_URL as string | undefined) || 'https://www.frontendpedia.com/author/administrator';
+
 const envSocialProfiles: string[] = [
   process.env.NEXT_PUBLIC_SOCIAL_TWITTER as string,
   process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN as string,
@@ -37,6 +39,7 @@ const envSocialProfiles: string[] = [
   process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM as string,
   process.env.NEXT_PUBLIC_SOCIAL_DRIBBBLE as string,
   process.env.NEXT_PUBLIC_SOCIAL_BEHANCE as string,
+  adminProfileUrl as string,
 ].filter(Boolean);
 
 const socialProfiles: string[] = Array.from(new Set([...defaultSocialProfiles, ...envSocialProfiles]));
@@ -51,6 +54,13 @@ const organizationLdJson: Record<string, any> = {
 
 if (socialProfiles.length > 0) {
   organizationLdJson.sameAs = socialProfiles;
+}
+
+if (adminProfileUrl) {
+  organizationLdJson.founder = {
+    '@type': 'Person',
+    url: adminProfileUrl,
+  };
 }
 
 export const viewport: Viewport = {
