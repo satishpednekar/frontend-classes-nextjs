@@ -91,6 +91,12 @@ export default async function PostDefault({ params }) {
       <Script id="ldjson-blogposting" type="application/ld+json" strategy="afterInteractive">
         {JSON.stringify(blogPosting)}
       </Script>
+      <Script 
+        async="async" 
+        data-cfasync="false" 
+        src="//pl27666968.revenuecpmgate.com/c37a4b7c0b7e0fc33d4e25ee8f6c415c/invoke.js"
+        strategy="afterInteractive"
+      />
       <PostPage post={post} />
     </>
   );
