@@ -19,7 +19,7 @@ async function sharedMetaData(params) {
     },
     description:
       settings?.description,
-    keywords: ["JavaScript", "HTML", "CSS", "Frontend Development", "Web Development", "Generative AI frontend development", "Frontend Architecture", "Frontend Design Patterns", "Frontend design thinking"],
+    keywords: [ "frontend architecture", "frontend design patterns", "javascript design patterns", "user interface(UI) architecture", "frontend design thinking", "modern web development", "web/frontend consulting services", "frontend web development services", "frontend development agency"],
     authors: [{ name: "Frontendpedia" }],
     canonical: settings?.url,
     openGraph: {

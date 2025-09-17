@@ -8,6 +8,12 @@ export const dynamic = "force-dynamic";
 export const fetchCache = 'force-no-store';
 export const revalidate = 0;
 
+export const metadata = {
+  robots: { index: false, follow: false },
+  title: 'Search',
+  description: 'Search posts on Frontendpedia',
+};
+
 export default async function SearchPage({ searchParams }) {
   return (
     <>
