@@ -19,7 +19,9 @@ const ThemeSwitch = () => {
   return (
     <div className="inline-flex items-center">
       <SunIcon className="w-4 h-4 mr-2" />
+      <label htmlFor="themeSwitch" className="sr-only">Theme</label>
       <select
+        id="themeSwitch"
         name="themeSwitch"
         value={theme}
         onChange={e => setTheme(e.target.value)}>

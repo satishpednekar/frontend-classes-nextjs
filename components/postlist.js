@@ -120,7 +120,8 @@ export default function PostList({
                     {post?.author?.image && (
                       <Image
                         src={AuthorimageProps.src}
-                        alt={post?.author?.name}
+                        alt=""
+                        aria-hidden="true"
                         className="rounded-full object-cover"
                         fill
                         sizes="20px"

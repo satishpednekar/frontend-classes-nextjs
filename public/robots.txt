@@ -2,8 +2,23 @@
 User-agent: *
 Allow: /
 
+# Disallow Next.js build asset media from indexing/crawling
+Disallow: /_next/static/media/
+
+# Disallow other irrelevant assets/endpoints
+Disallow: /_next/static/chunks/
+Disallow: /_next/static/css/
+Disallow: /_next/static/*.js
+Disallow: /_next/static/*.css
+Disallow: /_next/static/*.map
+Disallow: /_next/static/*.wasm
+Disallow: /_next/static/*.json
+Disallow: /api/
+Disallow: /studio/
+Disallow: /debug/
+
 # Host
-Host: https://frontendpedia.com
+Host: https://www.frontendpedia.com
 
 # Sitemaps
-Sitemap: https://frontendpedia.com/sitemap.xml
+Sitemap: https://www.frontendpedia.com/sitemap.xml
