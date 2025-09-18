@@ -77,11 +77,6 @@ export default function Post(props) {
         </div>
       </Container>
 
-      {/* Adsterra Ad Container */}
-      <div className="mx-auto max-w-screen-lg px-4 py-6">
-        <div id="container-c37a4b7c0b7e0fc33d4e25ee8f6c415c"></div>
-      </div>
-
       <div className="relative z-0 mx-auto aspect-video max-w-screen-lg overflow-hidden lg:rounded-lg">
         {imageProps && (
           <Image
@@ -93,6 +88,11 @@ export default function Post(props) {
             className="object-cover"
           />
         )}
+      </div>
+
+      {/* Adsterra Ad Container - Below Post Image */}
+      <div className="mx-auto max-w-screen-lg px-1 py-3">
+        <div id="container-c37a4b7c0b7e0fc33d4e25ee8f6c415c"></div>
       </div>
 
       <Container>
@@ -107,6 +107,12 @@ export default function Post(props) {
               ← View all posts
             </Link>
           </div>
+          
+          {/* Adsterra Ad Container - After View all posts link */}
+          <div className="mx-auto max-w-screen-lg px-1 py-3">
+            <div id="container-c37a4b7c0b7e0fc33d4e25ee8f6c415c"></div>
+          </div>
+          
           {post.author && <AuthorCard author={post.author} />}
         </article>
       </Container>
