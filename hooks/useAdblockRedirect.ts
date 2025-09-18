@@ -1,156 +1,193 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { runAdblockDetection, cleanupDetections } from '@/lib/adblock-detection';
 
 interface AdblockRedirectOptions {
   enabled?: boolean;
   checkDelay?: number;
   excludePaths?: string[];
+  enableLogging?: boolean;
 }
 
 export const useAdblockRedirect = (options: AdblockRedirectOptions = {}) => {
   const {
     enabled = true,
     checkDelay = 2000,
-    excludePaths = ['/adblock']
+    excludePaths = ['/adblock'],
+    enableLogging = false
   } = options;
 
   const router = useRouter();
   const pathname = usePathname();
   const [hasChecked, setHasChecked] = useState(false);
+  const isMountedRef = useRef(true);
+  const detectionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Adblock detection methods
-  const detectAdblock = async (): Promise<boolean> => {
-    return new Promise((resolve) => {
-      // Method 1: Check if ad elements are hidden
-      const adElement = document.createElement('div');
-      adElement.className = 'adsbox';
-      adElement.innerHTML = '&nbsp;';
-      adElement.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
-      document.body.appendChild(adElement);
-      
-      setTimeout(() => {
-        const isBlocked = adElement.offsetHeight === 0 || adElement.offsetWidth === 0;
-        adElement.remove();
-        resolve(isBlocked);
-      }, 100);
-    });
-  };
-
-  const checkAdScript = async (): Promise<boolean> => {
-    return new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-      script.onload = () => {
-        script.remove();
-        resolve(false); // Script loaded successfully
-      };
-      script.onerror = () => {
-        script.remove();
-        resolve(true); // Script was blocked
-      };
-      document.head.appendChild(script);
-      
-      setTimeout(() => {
-        script.remove();
-        resolve(true);
-      }, 3000);
-    });
-  };
-
-  const checkAdClass = async (): Promise<boolean> => {
-    return new Promise((resolve) => {
-      const testElement = document.createElement('div');
-      testElement.className = 'advertisement';
-      testElement.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
-      document.body.appendChild(testElement);
-      
-      setTimeout(() => {
-        const computedStyle = window.getComputedStyle(testElement);
-        const isBlocked = computedStyle.display === 'none' || 
-                         computedStyle.visibility === 'hidden' ||
-                         computedStyle.height === '0px';
-        testElement.remove();
-        resolve(isBlocked);
-      }, 100);
-    });
-  };
-
-  // Check for Brave browser
-  const checkBraveBrowser = async (): Promise<boolean> => {
-    return new Promise((resolve) => {
-      const isBrave = !!(window as any).chrome && (window as any).chrome.runtime && (window as any).chrome.runtime.onConnect;
-      
-      if (isBrave) {
-        const script = document.createElement('script');
-        script.src = 'https://googletagmanager.com/gtag/js?id=GTM-XXXXXX';
-        script.onload = () => {
-          script.remove();
-          resolve(false);
-        };
-        script.onerror = () => {
-          script.remove();
-          resolve(true);
-        };
-        document.head.appendChild(script);
-        
-        setTimeout(() => {
-          script.remove();
-          resolve(true);
-        }, 2000);
-      } else {
-        resolve(false);
-      }
-    });
-  };
-
-  // Run detection
+  // Run detection with proper cleanup and error handling
   const runDetection = async () => {
-    if (!enabled || hasChecked) return;
+    console.log('🔍 runDetection called');
+    
+    if (!isMountedRef.current) {
+      console.log('🔍 runDetection: Component unmounted, skipping');
+      return;
+    }
+    
+    console.log('🔍 AdblockRedirect: Starting detection', { enabled, hasChecked, pathname });
+    
+    if (enableLogging) {
+      console.log('🔍 AdblockRedirect: Starting detection', { enabled, hasChecked, pathname });
+    }
+    
+    if (!enabled || hasChecked) {
+      if (enableLogging) {
+        console.log('🔍 AdblockRedirect: Skipping detection', { enabled, hasChecked });
+      }
+      return;
+    }
     
     // Skip if on excluded paths
     if (excludePaths.some(path => pathname.startsWith(path))) {
+      if (enableLogging) {
+        console.log('🔍 AdblockRedirect: Skipping excluded path', pathname);
+      }
+      return;
+    }
+
+    // Check if we've already detected adblock in this session
+    const sessionKey = `adblock-detected-${pathname}`;
+    const alreadyDetected = sessionStorage.getItem(sessionKey);
+    if (alreadyDetected) {
+      if (enableLogging) {
+        console.log('🔍 AdblockRedirect: Already detected in this session, skipping');
+      }
+      setHasChecked(true);
+      return;
+    }
+
+    // Prevent rapid successive detections (minimum 5 seconds between detections)
+    const now = Date.now();
+    const lastDetection = localStorage.getItem('last-adblock-detection');
+    if (lastDetection && (now - parseInt(lastDetection)) < 5000) {
+      if (enableLogging) {
+        console.log('🔍 AdblockRedirect: Too soon since last detection, skipping');
+      }
+      setHasChecked(true);
       return;
     }
 
     try {
-      const results = await Promise.allSettled([
-        detectAdblock(),
-        checkAdScript(),
-        checkAdClass(),
-        checkBraveBrowser()
-      ]);
+      console.log('🔍 AdblockRedirect: Running detection methods...');
+      
+      if (enableLogging) {
+        console.log('🔍 AdblockRedirect: Running detection methods...');
+      }
+      
+      console.log('🔍 About to call runAdblockDetection...');
+      const { detected, results, details } = await runAdblockDetection({
+        enableLogging,
+        methods: ['adElement', 'adScript', 'adClass', 'adBlockPlus', 'enhancedAdblock', 'realAdContent']
+      });
+      console.log('🔍 runAdblockDetection completed:', { detected, results, details });
 
-      const detections = results
-        .filter(result => result.status === 'fulfilled' && result.value === true)
-        .length;
+      if (!isMountedRef.current) return;
 
-      if (detections > 0) {
+      if (enableLogging) {
+        console.log('🔍 AdblockRedirect: Detection results', { detected, results, details });
+      }
+
+      if (detected) {
+        console.log('🚨 AdblockRedirect: Adblock detected! Redirecting...');
+        if (enableLogging) {
+          console.log('🚨 AdblockRedirect: Adblock detected! Redirecting...');
+        }
+        // Set session flag to prevent loop
+        sessionStorage.setItem(sessionKey, 'true');
+        // Set timestamp to prevent rapid detections
+        localStorage.setItem('last-adblock-detection', Date.now().toString());
         // Adblock detected, redirect to adblock page
         const currentUrl = encodeURIComponent(pathname + window.location.search);
         router.push(`/adblock?return=${currentUrl}`);
+      } else {
+        console.log('✅ AdblockRedirect: No adblock detected');
+        if (enableLogging) {
+          console.log('✅ AdblockRedirect: No adblock detected');
+        }
+        // Clear any previous detection flags
+        sessionStorage.removeItem(sessionKey);
+        // Set timestamp to prevent rapid detections
+        localStorage.setItem('last-adblock-detection', Date.now().toString());
       }
     } catch (error) {
-      console.warn('Adblock detection error:', error);
+      if (enableLogging) {
+        console.warn('❌ AdblockRedirect: Detection error:', error);
+      }
     } finally {
-      setHasChecked(true);
+      if (isMountedRef.current) {
+        setHasChecked(true);
+      }
     }
   };
 
-  // Run detection after delay
+  // Reset hasChecked when pathname changes, but only if not coming from adblock page
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (pathname !== '/adblock') {
+      setHasChecked(false);
+    }
+  }, [pathname]);
 
-    const timer = setTimeout(() => {
+  // Run detection after delay with proper cleanup
+  useEffect(() => {
+    console.log('🔧 useEffect triggered:', { pathname, enabled, checkDelay });
+    
+    if (typeof window === 'undefined') {
+      console.log('🔧 Skipping - no window');
+      return;
+    }
+    
+    // Don't run detection if we're on the adblock page
+    if (pathname === '/adblock') {
+      console.log('🔧 On adblock page - skipping detection');
+      setHasChecked(true);
+      return;
+    }
+
+    console.log('🔧 Setting up detection timeout:', checkDelay);
+
+    // Clear any existing timeout
+    if (detectionTimeoutRef.current) {
+      clearTimeout(detectionTimeoutRef.current);
+    }
+
+    detectionTimeoutRef.current = setTimeout(() => {
+      console.log('🔧 Timeout fired - running detection');
       runDetection();
     }, checkDelay);
 
-    return () => clearTimeout(timer);
+    return () => {
+      console.log('🔧 Cleanup - clearing timeout');
+      if (detectionTimeoutRef.current) {
+        clearTimeout(detectionTimeoutRef.current);
+        detectionTimeoutRef.current = null;
+      }
+    };
   }, [pathname, enabled, checkDelay]);
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      if (detectionTimeoutRef.current) {
+        clearTimeout(detectionTimeoutRef.current);
+      }
+      cleanupDetections();
+    };
+  }, []);
+
   return {
-    hasChecked
+    hasChecked,
+    isDetecting: !hasChecked && enabled && pathname !== '/adblock'
   };
 };
 

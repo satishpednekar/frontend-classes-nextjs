@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { cx } from '@/utils/all';
+import { runAdblockDetection } from '@/lib/adblock-detection';
 
 export default function AdblockPage() {
   const router = useRouter();
@@ -17,79 +18,17 @@ export default function AdblockPage() {
   const returnUrl = searchParams.get('return') || '/';
   const originalUrl = decodeURIComponent(returnUrl);
 
-  // Adblock detection methods
-  const detectAdblock = async (): Promise<boolean> => {
-    return new Promise((resolve) => {
-      // Method 1: Check if ad elements are hidden
-      const adElement = document.createElement('div');
-      adElement.className = 'adsbox';
-      adElement.innerHTML = '&nbsp;';
-      adElement.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
-      document.body.appendChild(adElement);
-      
-      setTimeout(() => {
-        const isBlocked = adElement.offsetHeight === 0 || adElement.offsetWidth === 0;
-        adElement.remove();
-        resolve(isBlocked);
-      }, 100);
-    });
-  };
-
-  const checkAdScript = async (): Promise<boolean> => {
-    return new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-      script.onload = () => {
-        script.remove();
-        resolve(false); // Script loaded successfully
-      };
-      script.onerror = () => {
-        script.remove();
-        resolve(true); // Script was blocked
-      };
-      document.head.appendChild(script);
-      
-      setTimeout(() => {
-        script.remove();
-        resolve(true);
-      }, 3000);
-    });
-  };
-
-  const checkAdClass = async (): Promise<boolean> => {
-    return new Promise((resolve) => {
-      const testElement = document.createElement('div');
-      testElement.className = 'advertisement';
-      testElement.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
-      document.body.appendChild(testElement);
-      
-      setTimeout(() => {
-        const computedStyle = window.getComputedStyle(testElement);
-        const isBlocked = computedStyle.display === 'none' || 
-                         computedStyle.visibility === 'hidden' ||
-                         computedStyle.height === '0px';
-        testElement.remove();
-        resolve(isBlocked);
-      }, 100);
-    });
-  };
-
-  // Run detection
+  // Run detection using shared utilities
   const runDetection = async () => {
     setIsChecking(true);
     
     try {
-      const results = await Promise.allSettled([
-        detectAdblock(),
-        checkAdScript(),
-        checkAdClass()
-      ]);
+      const { detected, results, details } = await runAdblockDetection({
+        enableLogging: false,
+        methods: ['adElement', 'adScript', 'adClass', 'adBlockPlus', 'enhancedAdblock']
+      });
 
-      const detections = results
-        .filter(result => result.status === 'fulfilled' && result.value === true)
-        .length;
-
-      if (detections > 0) {
+      if (detected) {
         setAdblockDetected(true);
       } else {
         // No adblock detected, redirect back to original page
@@ -121,6 +60,14 @@ export default function AdblockPage() {
 
   // Handle refresh after disabling adblock
   const handleRefresh = () => {
+    // Clear all adblock detection flags
+    Object.keys(sessionStorage).forEach(key => {
+      if (key.startsWith('adblock-detected-')) {
+        sessionStorage.removeItem(key);
+      }
+    });
+    // Clear detection timestamp
+    localStorage.removeItem('last-adblock-detection');
     window.location.reload();
   };
 
