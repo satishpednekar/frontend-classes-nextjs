@@ -40,20 +40,20 @@ export default function Post(props) {
 
           <div className="mt-3 flex justify-center space-x-3 text-gray-500 ">
             <div className="flex items-center gap-3">
-                  <div className="relative h-10 w-10 flex-shrink-0">
-                    {AuthorimageProps && (
-                      <Link href={`/author/${post.author.slug.current}`}>
-                        <Image
-                          src={AuthorimageProps.src}
-                          alt=""
-                          aria-hidden="true"
-                          className="rounded-full object-cover"
-                          fill
-                          sizes="40px"
-                        />
-                      </Link>
-                    )}
-                  </div>
+              <div className="relative h-10 w-10 flex-shrink-0">
+                {AuthorimageProps && (
+                  <Link href={`/author/${post.author.slug.current}`}>
+                    <Image
+                      src={AuthorimageProps.src}
+                      alt=""
+                      aria-hidden="true"
+                      className="rounded-full object-cover"
+                      fill
+                      sizes="40px"
+                    />
+                  </Link>
+                )}
+              </div>
               <div>
                 <p className="text-gray-800 dark:text-gray-400">
                   <Link href={`/author/${post.author.slug.current}`}>
@@ -90,14 +90,13 @@ export default function Post(props) {
         )}
       </div>
 
-      {/* Adsterra Ad Container - Below Post Image */}
-      <div className="mx-auto max-w-screen-lg px-1 py-3">
-        <div id="container-c37a4b7c0b7e0fc33d4e25ee8f6c415c"></div>
-      </div>
-
       <Container>
+        {/* Adsterra Ad Container - Below Post Image */}
+        <div className="mx-auto max-w-screen-lg px-1 py-2">
+          <div id="container-c37a4b7c0b7e0fc33d4e25ee8f6c415c"></div>
+        </div>
         <article className="mx-auto max-w-screen-lg ">
-          <div className="prose max-w-screen-lg my-3 dark:prose-invert prose-a:text-blue-600">
+          <div className="prose my-3 max-w-screen-lg dark:prose-invert prose-a:text-blue-600">
             {post.body && <PortableText value={post.body} />}
           </div>
           <div className="mb-7 mt-7 flex justify-center">
@@ -107,12 +106,6 @@ export default function Post(props) {
               ← View all posts
             </Link>
           </div>
-          
-          {/* Adsterra Ad Container - After View all posts link */}
-          <div className="mx-auto max-w-screen-lg px-1 py-3">
-            <div id="container-c37a4b7c0b7e0fc33d4e25ee8f6c415c"></div>
-          </div>
-          
           {post.author && <AuthorCard author={post.author} />}
         </article>
       </Container>

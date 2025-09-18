@@ -5,7 +5,7 @@ import { Inter, Noto_Sans } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import LcpObserver from "@/components/LcpObserver";
-import AdblockDetectorStrict from "@/components/AdblockDetectorStrict";
+import AdblockDetectorFixed from "@/components/AdblockDetectorFixed";
 import Script from "next/script";
 import type { Metadata, Viewport } from 'next';
 
@@ -170,7 +170,7 @@ export default function RootLayout({
         <SpeedInsights />
         <Analytics />
         <LcpObserver />
-        <AdblockDetectorStrict 
+        <AdblockDetectorFixed 
           enabled={true}
           showModalDelay={2000}
         />
