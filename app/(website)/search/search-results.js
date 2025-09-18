@@ -10,24 +10,52 @@ export default async function SearchResults({ searchParams }) {
       {query && (
         <div className="mb-6">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Search results for: <span className="font-semibold">"{query}"</span>
+            {posts.length > 0 ? (
+              <>
+                Found <span className="font-semibold text-blue-600 dark:text-blue-400">{posts.length}</span> result{posts.length === 1 ? '' : 's'} for: <span className="font-semibold">"{query}"</span>
+              </>
+            ) : (
+              <>
+                Search results for: <span className="font-semibold">"{query}"</span>
+              </>
+            )}
           </p>
         </div>
       )}
       
       {posts && posts?.length === 0 && query && (
-        <div className="flex h-40 items-center justify-center">
-          <span className="text-lg text-gray-500">
-            No posts found for "{query}". Try different keywords.
-          </span>
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🔍</div>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              No posts found
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              No posts found for "<span className="font-semibold">{query}</span>". Try different keywords.
+            </p>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              <p>Try searching for:</p>
+              <ul className="mt-2 space-y-1">
+                <li>• Different keywords</li>
+                <li>• Broader terms</li>
+                <li>• Check spelling</li>
+              </ul>
+            </div>
+          </div>
         </div>
       )}
 
       {!query && (
-        <div className="flex h-40 items-center justify-center">
-          <span className="text-lg text-gray-500">
-            Enter a search term to find posts.
-          </span>
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🔍</div>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              Start Searching
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Enter a search term to find posts about frontend development.
+            </p>
+          </div>
         </div>
       )}
 

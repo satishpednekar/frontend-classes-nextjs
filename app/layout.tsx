@@ -51,12 +51,27 @@ const organizationLdJson: Record<string, any> = {
   '@type': 'Organization',
   name: 'Frontendpedia',
   url: baseUrl,
-  logo: `${baseUrl}/logo.svg`,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${baseUrl}/logo.svg`,
+    width: 200,
+    height: 60
+  },
+  description: 'Master frontend engineering, design & architecture with expert insights, tutorials & guides that transform learning into real impact.',
+  foundingDate: '2024',
+  sameAs: socialProfiles,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer service',
+    url: `${baseUrl}/contact`
+  },
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'US'
+  }
 };
 
-if (socialProfiles.length > 0) {
-  organizationLdJson.sameAs = socialProfiles;
-}
+// Social profiles are already included in the organizationLdJson object above
 
 if (adminProfileUrl) {
   organizationLdJson.founder = {
@@ -71,7 +86,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Frontendpedia',
+  title: {
+    default: 'Frontendpedia',
+    template: '%s | Frontendpedia'
+  },
   description: `FrontendPedia – Master frontend engineering, design & architecture with expert insights, tutorials & guides that transform learning into real impact.`,
   metadataBase: new URL(baseUrl),
   icons: {
@@ -84,44 +102,87 @@ export const metadata: Metadata = {
   },
   robots: {
     index: true,
-    follow: true
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   formatDetection: {
     telephone: false
   },
   keywords: [
-    'frontend architecture',
+    'frontend development',
     'web development',
-    'UI/UX',
-    'design patterns'
+    'React',
+    'Next.js',
+    'JavaScript',
+    'TypeScript',
+    'CSS',
+    'HTML',
+    'UI/UX design',
+    'frontend architecture',
+    'web performance',
+    'responsive design',
+    'progressive web apps',
+    'frontend tutorials',
+    'coding tutorials',
+    'web development blog',
+    'frontend engineering',
+    'modern web development',
+    'frontend best practices'
   ],
-  authors: [{ name: 'Frontendpedia' }],
+  authors: [{ name: 'Frontendpedia', url: baseUrl }],
+  creator: 'Frontendpedia',
+  publisher: 'Frontendpedia',
   alternates: {
-    canonical: '/'
+    canonical: '/',
+    types: {
+      'application/rss+xml': [
+        { url: '/rss.xml', title: 'Frontendpedia RSS Feed' }
+      ]
+    }
   },
   openGraph: {
     type: 'website',
     url: '/',
     siteName: 'Frontendpedia',
     locale: 'en_US',
-    title: "Frontendpedia",
+    title: "Frontendpedia - Master Frontend Development",
     description: `FrontendPedia – Master frontend engineering, design & architecture with expert insights, tutorials & guides that transform learning into real impact.`,
-    images: [{ url: '/opengraph.jpg', alt: 'Frontendpedia Open Graph Image' }]
+    images: [
+      { 
+        url: '/opengraph.jpg', 
+        alt: 'Frontendpedia - Master Frontend Development',
+        width: 1200,
+        height: 630,
+        type: 'image/jpeg'
+      }
+    ]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Frontendpedia',
+    title: 'Frontendpedia - Master Frontend Development',
     description: `FrontendPedia – Master frontend engineering, design & architecture with expert insights, tutorials & guides that transform learning into real impact.`,
     images: ['/opengraph.jpg'],
     site: process.env.NEXT_PUBLIC_TWITTER_HANDLE || '@Frontendpedia',
     creator: process.env.NEXT_PUBLIC_TWITTER_HANDLE || '@Frontendpedia',
   },
   verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
     yandex: '07e488dc1de89449',
+    yahoo: process.env.YAHOO_SITE_VERIFICATION,
   },
   other: {
     'google-adsense-account': 'ca-pub-3296825399852834',
+    'msvalidate.01': process.env.BING_SITE_VERIFICATION,
   },
+  category: 'technology',
+  classification: 'Technology Blog',
+  referrer: 'origin-when-cross-origin',
 };
 
 export default function RootLayout({
@@ -145,10 +206,24 @@ export default function RootLayout({
             '@type': 'WebSite',
             name: 'Frontendpedia',
             url: baseUrl,
+            description: 'Master frontend engineering, design & architecture with expert insights, tutorials & guides that transform learning into real impact.',
+            inLanguage: 'en-US',
+            isAccessibleForFree: true,
             potentialAction: {
               '@type': 'SearchAction',
               target: `${baseUrl}/search?q={search_term_string}`,
               'query-input': 'required name=search_term_string'
+            },
+            mainEntity: {
+              '@type': 'Blog',
+              name: 'Frontendpedia Blog',
+              description: 'A comprehensive blog about frontend development, web technologies, and modern web development practices.',
+              url: `${baseUrl}/archive`,
+              publisher: {
+                '@type': 'Organization',
+                name: 'Frontendpedia',
+                url: baseUrl
+              }
             }
           })}
         </Script>

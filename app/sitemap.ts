@@ -18,11 +18,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${baseUrl}/`, lastModified: now, changeFrequency: "daily", priority: 1 },
-    { url: `${baseUrl}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${baseUrl}/contact`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${baseUrl}/archive`, lastModified: now, changeFrequency: "weekly", priority: 0.5 },
-    { url: `${baseUrl}/search`, lastModified: now, changeFrequency: "weekly", priority: 0.4 }
+    { url: `${baseUrl}/`, lastModified: now, changeFrequency: "daily", priority: 1.0 },
+    { url: `${baseUrl}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${baseUrl}/contact`, lastModified: now, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${baseUrl}/archive`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/search`, lastModified: now, changeFrequency: "weekly", priority: 0.6 }
   ];
 
   const postRoutes: MetadataRoute.Sitemap = Array.isArray(postEntries)
@@ -30,9 +30,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .filter((p: any) => p && p.slug)
         .map((p: any) => ({
           url: `${baseUrl}/post/${p.slug}`,
-          lastModified: now,
+          lastModified: new Date(p.publishedAt || p._createdAt || now),
           changeFrequency: "weekly",
-          priority: 0.7
+          priority: 0.8
         }))
     : [];
 
@@ -43,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           url: `${baseUrl}/category/${c.category}`,
           lastModified: now,
           changeFrequency: "weekly",
-          priority: 0.5
+          priority: 0.7
         }))
     : [];
 
@@ -54,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           url: `${baseUrl}/author/${a.author}`,
           lastModified: now,
           changeFrequency: "weekly",
-          priority: 0.4
+          priority: 0.6
         }))
     : [];
 
