@@ -99,6 +99,32 @@ const nativeDetectionMethods = {
   }
 };
 
+// BlockAdBlock integration (optional)
+const checkWithBlockAdBlock = async (): Promise<boolean> => {
+  try {
+    const BlockAdBlock = await import('blockadblock');
+    return new Promise((resolve) => {
+      const bab = new BlockAdBlock.default({
+        checkOnLoad: false,
+        resetOnEnd: false
+      });
+
+      bab.onDetected(() => {
+        resolve(true);
+      });
+
+      bab.onNotDetected(() => {
+        resolve(false);
+      });
+
+      bab.check();
+    });
+  } catch (error) {
+    console.warn('BlockAdBlock library not available:', error);
+    return false;
+  }
+};
+
 // Main hook implementation
 export const useAdblockDetection = (options: AdblockDetectionOptions = {}): AdblockDetectionResult => {
   const {
@@ -111,43 +137,6 @@ export const useAdblockDetection = (options: AdblockDetectionOptions = {}): Adbl
   const [isChecking, setIsChecking] = useState(true);
   const [detectionMethod, setDetectionMethod] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
-
-  // BlockAdBlock integration (fallback method)
-  const checkWithBlockAdBlock = useCallback((): Promise<boolean> => {
-    return new Promise((resolve) => {
-      if (typeof window === 'undefined' || !enableBlockAdBlock) {
-        resolve(false);
-        return;
-      }
-
-      try {
-        // Dynamic import to avoid SSR issues
-        import('blockadblock').then((BlockAdBlock) => {
-          const bab = new BlockAdBlock.default({
-            checkOnLoad: false,
-            resetOnEnd: false
-          });
-
-          bab.onDetected(() => {
-            resolve(true);
-          });
-
-          bab.onNotDetected(() => {
-            resolve(false);
-          });
-
-          bab.check();
-        }).catch((error) => {
-          // If BlockAdBlock fails to load, resolve as not detected
-          console.warn('BlockAdBlock library not available:', error);
-          resolve(false);
-        });
-      } catch (error) {
-        console.warn('BlockAdBlock import error:', error);
-        resolve(false);
-      }
-    });
-  }, [enableBlockAdBlock]);
 
   // Run all detection methods
   const runDetection = useCallback(async () => {
@@ -176,20 +165,25 @@ export const useAdblockDetection = (options: AdblockDetectionOptions = {}): Adbl
       }
 
       // If native methods didn't detect adblock, try BlockAdBlock as fallback
-      try {
-        const blockAdBlockResult = await checkWithBlockAdBlock();
-        
-        if (blockAdBlockResult) {
-          setIsAdblockDetected(true);
-          setDetectionMethod('BlockAdBlock');
-        } else {
+      if (enableBlockAdBlock) {
+        try {
+          const blockAdBlockResult = await checkWithBlockAdBlock();
+          
+          if (blockAdBlockResult) {
+            setIsAdblockDetected(true);
+            setDetectionMethod('BlockAdBlock');
+          } else {
+            setIsAdblockDetected(false);
+            setDetectionMethod('None detected');
+          }
+        } catch (error) {
+          // If BlockAdBlock fails, rely on native methods only
           setIsAdblockDetected(false);
-          setDetectionMethod('None detected');
+          setDetectionMethod('Native only (BlockAdBlock unavailable)');
         }
-      } catch (error) {
-        // If BlockAdBlock fails, rely on native methods only
+      } else {
         setIsAdblockDetected(false);
-        setDetectionMethod('Native only (BlockAdBlock unavailable)');
+        setDetectionMethod('None detected');
       }
     } catch (error) {
       console.warn('Adblock detection error:', error);
@@ -198,7 +192,7 @@ export const useAdblockDetection = (options: AdblockDetectionOptions = {}): Adbl
     } finally {
       setIsChecking(false);
     }
-  }, [checkWithBlockAdBlock]);
+  }, [enableBlockAdBlock]);
 
   // Retry detection function
   const retryDetection = useCallback(() => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import useAdblockDetection from '@/hooks/useAdblockDetection';
+import useAdblockDetection from '@/hooks/useAdblockDetectionRobust';
 import AdblockModal from './AdblockModal';
 
 interface AdblockDetectorProps {
