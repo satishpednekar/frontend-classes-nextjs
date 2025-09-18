@@ -1,0 +1,170 @@
+[1mdiff --git a/app/layout.tsx b/app/layout.tsx[m
+[1mindex 9253144..4052f15 100644[m
+[1m--- a/app/layout.tsx[m
+[1m+++ b/app/layout.tsx[m
+[36m@@ -51,12 +51,27 @@[m [mconst organizationLdJson: Record<string, any> = {[m
+   '@type': 'Organization',[m
+   name: 'Frontendpedia',[m
+   url: baseUrl,[m
+[31m-  logo: `${baseUrl}/logo.svg`,[m
+[32m+[m[32m  logo: {[m
+[32m+[m[32m    '@type': 'ImageObject',[m
+[32m+[m[32m    url: `${baseUrl}/logo.svg`,[m
+[32m+[m[32m    width: 200,[m
+[32m+[m[32m    height: 60[m
+[32m+[m[32m  },[m
+[32m+[m[32m  description: 'Master frontend engineering, design & architecture with expert insights, tutorials & guides that transform learning into real impact.',[m
+[32m+[m[32m  foundingDate: '2024',[m
+[32m+[m[32m  sameAs: socialProfiles,[m
+[32m+[m[32m  contactPoint: {[m
+[32m+[m[32m    '@type': 'ContactPoint',[m
+[32m+[m[32m    contactType: 'customer service',[m
+[32m+[m[32m    url: `${baseUrl}/contact`[m
+[32m+[m[32m  },[m
+[32m+[m[32m  address: {[m
+[32m+[m[32m    '@type': 'PostalAddress',[m
+[32m+[m[32m    addressCountry: 'US'[m
+[32m+[m[32m  }[m
+ };[m
+ [m
+[31m-if (socialProfiles.length > 0) {[m
+[31m-  organizationLdJson.sameAs = socialProfiles;[m
+[31m-}[m
+[32m+[m[32m// Social profiles are already included in the organizationLdJson object above[m
+ [m
+ if (adminProfileUrl) {[m
+   organizationLdJson.founder = {[m
+[36m@@ -71,7 +86,10 @@[m [mexport const viewport: Viewport = {[m
+ };[m
+ [m
+ export const metadata: Metadata = {[m
+[31m-  title: 'Frontendpedia',[m
+[32m+[m[32m  title: {[m
+[32m+[m[32m    default: 'Frontendpedia',[m
+[32m+[m[32m    template: '%s | Frontendpedia'[m
+[32m+[m[32m  },[m
+   description: `FrontendPedia – Master frontend engineering, design & architecture with expert insights, tutorials & guides that transform learning into real impact.`,[m
+   metadataBase: new URL(baseUrl),[m
+   icons: {[m
+[36m@@ -84,44 +102,87 @@[m [mexport const metadata: Metadata = {[m
+   },[m
+   robots: {[m
+     index: true,[m
+[31m-    follow: true[m
+[32m+[m[32m    follow: true,[m
+[32m+[m[32m    googleBot: {[m
+[32m+[m[32m      index: true,[m
+[32m+[m[32m      follow: true,[m
+[32m+[m[32m      'max-video-preview': -1,[m
+[32m+[m[32m      'max-image-preview': 'large',[m
+[32m+[m[32m      'max-snippet': -1,[m
+[32m+[m[32m    },[m
+   },[m
+   formatDetection: {[m
+     telephone: false[m
+   },[m
+   keywords: [[m
+[31m-    'frontend architecture',[m
+[32m+[m[32m    'frontend development',[m
+     'web development',[m
+[31m-    'UI/UX',[m
+[31m-    'design patterns'[m
+[32m+[m[32m    'React',[m
+[32m+[m[32m    'Next.js',[m
+[32m+[m[32m    'JavaScript',[m
+[32m+[m[32m    'TypeScript',[m
+[32m+[m[32m    'CSS',[m
+[32m+[m[32m    'HTML',[m
+[32m+[m[32m    'UI/UX design',[m
+[32m+[m[32m    'frontend architecture',[m
+[32m+[m[32m    'web performance',[m
+[32m+[m[32m    'responsive design',[m
+[32m+[m[32m    'progressive web apps',[m
+[32m+[m[32m    'frontend tutorials',[m
+[32m+[m[32m    'coding tutorials',[m
+[32m+[m[32m    'web development blog',[m
+[32m+[m[32m    'frontend engineering',[m
+[32m+[m[32m    'modern web development',[m
+[32m+[m[32m    'frontend best practices'[m
+   ],[m
+[31m-  authors: [{ name: 'Frontendpedia' }],[m
+[32m+[m[32m  authors: [{ name: 'Frontendpedia', url: baseUrl }],[m
+[32m+[m[32m  creator: 'Frontendpedia',[m
+[32m+[m[32m  publisher: 'Frontendpedia',[m
+   alternates: {[m
+[31m-    canonical: '/'[m
+[32m+[m[32m    canonical: '/',[m
+[32m+[m[32m    types: {[m
+[32m+[m[32m      'application/rss+xml': [[m
+[32m+[m[32m        { url: '/rss.xml', title: 'Frontendpedia RSS Feed' }[m
+[32m+[m[32m      ][m
+[32m+[m[32m    }[m
+   },[m
+   openGraph: {[m
+     type: 'website',[m
+     url: '/',[m
+     siteName: 'Frontendpedia',[m
+     locale: 'en_US',[m
+[31m-    title: "Frontendpedia",[m
+[32m+[m[32m    title: "Frontendpedia - Master Frontend Development",[m
+     description: `FrontendPedia – Master frontend engineering, design & architecture with expert insights, tutorials & guides that transform learning into real impact.`,[m
+[31m-    images: [{ url: '/opengraph.jpg', alt: 'Frontendpedia Open Graph Image' }][m
+[32m+[m[32m    images: [[m
+[32m+[m[32m      {[m[41m [m
+[32m+[m[32m        url: '/opengraph.jpg',[m[41m [m
+[32m+[m[32m        alt: 'Frontendpedia - Master Frontend Development',[m
+[32m+[m[32m        width: 1200,[m
+[32m+[m[32m        height: 630,[m
+[32m+[m[32m        type: 'image/jpeg'[m
+[32m+[m[32m      }[m
+[32m+[m[32m    ][m
+   },[m
+   twitter: {[m
+     card: 'summary_large_image',[m
+[31m-    title: 'Frontendpedia',[m
+[32m+[m[32m    title: 'Frontendpedia - Master Frontend Development',[m
+     description: `FrontendPedia – Master frontend engineering, design & architecture with expert insights, tutorials & guides that transform learning into real impact.`,[m
+     images: ['/opengraph.jpg'],[m
+     site: process.env.NEXT_PUBLIC_TWITTER_HANDLE || '@Frontendpedia',[m
+     creator: process.env.NEXT_PUBLIC_TWITTER_HANDLE || '@Frontendpedia',[m
+   },[m
+   verification: {[m
+[32m+[m[32m    google: process.env.GOOGLE_SITE_VERIFICATION,[m
+     yandex: '07e488dc1de89449',[m
+[32m+[m[32m    yahoo: process.env.YAHOO_SITE_VERIFICATION,[m
+   },[m
+   other: {[m
+     'google-adsense-account': 'ca-pub-3296825399852834',[m
+[32m+[m[32m    'msvalidate.01': process.env.BING_SITE_VERIFICATION,[m
+   },[m
+[32m+[m[32m  category: 'technology',[m
+[32m+[m[32m  classification: 'Technology Blog',[m
+[32m+[m[32m  referrer: 'origin-when-cross-origin',[m
+ };[m
+ [m
+ export default function RootLayout({[m
+[36m@@ -145,10 +206,24 @@[m [mexport default function RootLayout({[m
+             '@type': 'WebSite',[m
+             name: 'Frontendpedia',[m
+             url: baseUrl,[m
+[32m+[m[32m            description: 'Master frontend engineering, design & architecture with expert insights, tutorials & guides that transform learning into real impact.',[m
+[32m+[m[32m            inLanguage: 'en-US',[m
+[32m+[m[32m            isAccessibleForFree: true,[m
+             potentialAction: {[m
+               '@type': 'SearchAction',[m
+               target: `${baseUrl}/search?q={search_term_string}`,[m
+               'query-input': 'required name=search_term_string'[m
+[32m+[m[32m            },[m
+[32m+[m[32m            mainEntity: {[m
+[32m+[m[32m              '@type': 'Blog',[m
+[32m+[m[32m              name: 'Frontendpedia Blog',[m
+[32m+[m[32m              description: 'A comprehensive blog about frontend development, web technologies, and modern web development practices.',[m
+[32m+[m[32m              url: `${baseUrl}/archive`,[m
+[32m+[m[32m              publisher: {[m
+[32m+[m[32m                '@type': 'Organization',[m
+[32m+[m[32m                name: 'Frontendpedia',[m
+[32m+[m[32m                url: baseUrl[m
+[32m+[m[32m              }[m
+             }[m
+           })}[m
+         </Script>[m

@@ -5,8 +5,6 @@ import { Inter, Noto_Sans } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/react"
 import LcpObserver from "@/components/LcpObserver";
-import AdblockRedirectWrapper from "@/components/AdblockRedirectWrapper";
-import AdblockErrorBoundary from "@/components/AdblockErrorBoundary";
 import Script from "next/script";
 import type { Metadata, Viewport } from 'next';
 
@@ -246,9 +244,6 @@ export default function RootLayout({
         <SpeedInsights />
         <Analytics />
         <LcpObserver />
-        <AdblockErrorBoundary>
-          <AdblockRedirectWrapper />
-        </AdblockErrorBoundary>
       </body>
     </html>
   );
