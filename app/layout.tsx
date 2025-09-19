@@ -239,6 +239,13 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        <Script
+          src="https://fpyf8.com/88/tag.min.js"
+          data-zone="172164"
+          async
+          data-cfasync="false"
+          strategy="afterInteractive"
+        />
       </head>
       <body className="antialiased text-gray-800 dark:bg-black dark:text-gray-400">
         <Providers>{children}</Providers>
