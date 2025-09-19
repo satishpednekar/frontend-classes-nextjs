@@ -1,6 +1,6 @@
 "use client";
 
-import Footer from "./Footer";
+import Footer from "./footer";
 import GDPRBanner from "./GDPRBanner";
 
 export default function ClientFooter() {
