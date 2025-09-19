@@ -57,8 +57,8 @@ export default function CookiePolicy() {
               The information gathered relating to our website is used to create reports about the use of our website.
             </p>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              <strong>Google AdSense:</strong> We use Google AdSense to display advertisements on our website. 
-              Google AdSense uses cookies to serve ads based on your prior visits to our website or other websites.
+              <strong>Third-Party Advertising:</strong> We use third-party advertising services to display advertisements on our website. 
+              These services use cookies to serve ads based on your prior visits to our website or other websites.
             </p>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               <strong>Social Media:</strong> Our website may include social media features, such as sharing buttons, 

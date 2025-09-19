@@ -115,24 +115,26 @@ export const metadata: Metadata = {
   },
   keywords: [
     'frontend development',
-    'web development',
-    'React',
-    'Next.js',
-    'JavaScript',
-    'TypeScript',
-    'CSS',
-    'HTML',
-    'UI/UX design',
+    'frontend/web development',
     'frontend architecture',
-    'web performance',
-    'responsive design',
-    'progressive web apps',
-    'frontend tutorials',
-    'coding tutorials',
-    'web development blog',
-    'frontend engineering',
-    'modern web development',
-    'frontend best practices'
+    'frontend architecture examples',
+    'scalable frontend architecture patterns',
+    'TypeScript native architecture',
+    'UI/UX design architecture',
+    'native javascript architecture',
+    'web performance architecture',
+    'responsive design architecture',
+    'progressive web apps architecture',
+    'frontend architecture tutorials',
+    'coding architecture tutorials',
+    'web development architecture blog',
+    'frontend engineering architecture',
+    'modern web development architecture',
+    'frontend best practices architecture',
+    'frontend architecture consulting',
+    'frontend consulting',
+    'frontend architecture services',
+    'web application architecture reviews',
   ],
   authors: [{ name: 'Frontendpedia', url: baseUrl }],
   creator: 'Frontendpedia',
@@ -176,8 +178,7 @@ export const metadata: Metadata = {
     yahoo: process.env.YAHOO_SITE_VERIFICATION,
   },
   other: {
-    'google-adsense-account': 'ca-pub-3296825399852834',
-    'msvalidate.01': process.env.BING_SITE_VERIFICATION,
+    'msvalidate.01': process.env.BING_SITE_VERIFICATION || '',
   },
   category: 'technology',
   classification: 'Technology Blog',
@@ -234,18 +235,29 @@ export default function RootLayout({
           {JSON.stringify(organizationLdJson)}
         </Script>
         <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3296825399852834"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-        <Script
-          src="https://fpyf8.com/88/tag.min.js"
-          data-zone="172164"
-          async
+          src="https://cmp.gatekeeperconsent.com/min.js"
           data-cfasync="false"
           strategy="afterInteractive"
         />
+        <Script
+          src="https://the.gatekeeperconsent.com/cmp.min.js"
+          data-cfasync="false"
+          strategy="afterInteractive"
+        />
+        <Script
+          async
+          src="//www.ezojs.com/ezoic/sa.min.js"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="ezoic-standalone"
+          strategy="afterInteractive"
+        >
+          {`
+            window.ezstandalone = window.ezstandalone || {};
+            ezstandalone.cmd = ezstandalone.cmd || [];
+          `}
+        </Script>
       </head>
       <body className="antialiased text-gray-800 dark:bg-black dark:text-gray-400">
         <Providers>{children}</Providers>

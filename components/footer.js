@@ -197,10 +197,10 @@ export default function Footer() {
             </div>
       </div>
           
-          {/* AdSense Compliance Notice */}
+          {/* Advertising Compliance Notice */}
           <div className="mt-4 pt-4 border-t border-gray-800">
             <p className="text-xs text-gray-500 text-center">
-              This site uses Google AdSense. By using this site, you agree to our use of cookies for advertising purposes. 
+              This site uses third-party advertising services. By using this site, you agree to our use of cookies for advertising purposes. 
               <a href="https://www.google.com/settings/ads" className="text-blue-400 hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">
                 Opt out of personalized ads
               </a>

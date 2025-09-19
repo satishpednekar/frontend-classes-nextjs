@@ -1,2 +1,3 @@
-google.com, pub-3296825399852834, DIRECT, f08c47fec0942fa0
+# This file is now managed by Ezoic via /ads.txt route
+# For the most up-to-date ads.txt, visit: https://frontendpedia.com/ads.txt
 
