@@ -80,17 +80,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/archive" className="text-gray-400 hover:text-white transition-colors">
-                  All Posts
-                </Link>
-              </li>
-              <li>
-                <Link href="/category" className="text-gray-400 hover:text-white transition-colors">
-                  Categories
-                </Link>
-              </li>
-              <li>
-                <Link href="/author" className="text-gray-400 hover:text-white transition-colors">
-                  Authors
+                  Archive
                 </Link>
               </li>
               <li>
