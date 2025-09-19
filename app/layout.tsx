@@ -179,6 +179,7 @@ export const metadata: Metadata = {
   },
   other: {
     'msvalidate.01': process.env.BING_SITE_VERIFICATION || '',
+    'ezoic-site-verification': 'jFhXAnlrCrVOxih7HTcMxp88YJjsU3',
   },
   category: 'technology',
   classification: 'Technology Blog',
