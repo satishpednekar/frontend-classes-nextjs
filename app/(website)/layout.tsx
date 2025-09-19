@@ -2,7 +2,7 @@ import { Analytics } from "@vercel/analytics/react"
 import Script from "next/script"
 
 import { getSettings } from "@/lib/sanity/client";
-import Footer from "@/components/footer";
+import ClientFooter from "@/components/ClientFooter";
 import { urlForImage } from "@/lib/sanity/image";
 import Navbar from "@/components/navbar";
 
@@ -70,7 +70,7 @@ export default async function Layout({ children, params }) {
 
       <div>{children}</div>
 
-      <Footer {...settings} />
+      <ClientFooter />
     </>
   );
 }

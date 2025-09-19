@@ -92,11 +92,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   icons: {
     icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/favicon.ico', sizes: 'any' },
       { url: '/favicon.png', type: 'image/png' },
     ],
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    shortcut: '/favicon.svg',
+    apple: '/apple-touch-icon.svg',
   },
   robots: {
     index: true,
