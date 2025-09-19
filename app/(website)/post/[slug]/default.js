@@ -77,7 +77,7 @@ export default function Post(props) {
         </div>
       </Container>
 
-      <div className="relative z-0 mx-auto aspect-video max-w-screen-lg overflow-hidden lg:rounded-lg">
+      <div className="relative z-0 mx-auto aspect-video max-w-screen-lg overflow-hidden lg:rounded-lg" style={{ position: 'relative' }}>
         {imageProps && (
           <Image
             src={imageProps.src}
@@ -95,6 +95,38 @@ export default function Post(props) {
         <div className="mx-auto max-w-screen-lg px-1 py-2">
           <div id="container-c37a4b7c0b7e0fc33d4e25ee8f6c415c"></div>
         </div>
+        
+        {/* Ezoic Ad Container - Under First Paragraph */}
+        {process.env.NODE_ENV === 'production' && (
+          <div className="mx-auto max-w-screen-lg px-1 py-2">
+            {/* Ezoic - under_first_paragraph - under_first_paragraph */}
+            <div id="ezoic-pub-ad-placeholder-109"></div>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  (function() {
+                    if (typeof ezstandalone !== 'undefined') {
+                      ezstandalone.cmd.push(function () {
+                        ezstandalone.showAds(109);
+                      });
+                    } else {
+                      // Wait for ezstandalone to be available
+                      var checkEzstandalone = setInterval(function() {
+                        if (typeof ezstandalone !== 'undefined') {
+                          clearInterval(checkEzstandalone);
+                          ezstandalone.cmd.push(function () {
+                            ezstandalone.showAds(109);
+                          });
+                        }
+                      }, 100);
+                    }
+                  })();
+                `,
+              }}
+            />
+            {/* End Ezoic - under_first_paragraph - under_first_paragraph */}
+          </div>
+        )}
         <article className="mx-auto max-w-screen-lg ">
           <div className="prose my-3 max-w-screen-lg dark:prose-invert prose-a:text-blue-600">
             {post.body && <PortableText value={post.body} />}

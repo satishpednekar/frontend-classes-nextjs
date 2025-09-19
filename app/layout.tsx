@@ -234,30 +234,34 @@ export default function RootLayout({
         >
           {JSON.stringify(organizationLdJson)}
         </Script>
-        <Script
-          src="https://cmp.gatekeeperconsent.com/min.js"
-          data-cfasync="false"
-          strategy="afterInteractive"
-        />
-        <Script
-          src="https://the.gatekeeperconsent.com/cmp.min.js"
-          data-cfasync="false"
-          strategy="afterInteractive"
-        />
-        <Script
-          async
-          src="//www.ezojs.com/ezoic/sa.min.js"
-          strategy="afterInteractive"
-        />
-        <Script
-          id="ezoic-standalone"
-          strategy="afterInteractive"
-        >
-          {`
-            window.ezstandalone = window.ezstandalone || {};
-            ezstandalone.cmd = ezstandalone.cmd || [];
-          `}
-        </Script>
+        {process.env.NODE_ENV === 'production' && (
+          <>
+            <Script
+              src="https://cmp.gatekeeperconsent.com/min.js"
+              data-cfasync="false"
+              strategy="afterInteractive"
+            />
+            <Script
+              src="https://the.gatekeeperconsent.com/cmp.min.js"
+              data-cfasync="false"
+              strategy="afterInteractive"
+            />
+            <Script
+              async
+              src="//www.ezojs.com/ezoic/sa.min.js"
+              strategy="afterInteractive"
+            />
+            <Script
+              id="ezoic-standalone"
+              strategy="afterInteractive"
+            >
+              {`
+                window.ezstandalone = window.ezstandalone || {};
+                ezstandalone.cmd = ezstandalone.cmd || [];
+              `}
+            </Script>
+          </>
+        )}
       </head>
       <body className="antialiased text-gray-800 dark:bg-black dark:text-gray-400">
         <Providers>{children}</Providers>
