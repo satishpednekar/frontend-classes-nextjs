@@ -32,13 +32,8 @@ export default async function Post({ searchParams }) {
   return (
     <Container>
       <h1 className="text-brand-primary mb-3 mt-2 text-center text-3xl font-semibold tracking-tight dark:text-white lg:text-4xl lg:leading-snug">
-        Archive
+        Browse all posts, categories, and authors
       </h1>
-      <div className="text-center">
-        <p className="text-lg">
-          Browse all posts, categories, and authors
-        </p>
-      </div>
 
       {/* Categories Section */}
       {categories && categories.length > 0 && (
@@ -79,7 +74,7 @@ export default async function Post({ searchParams }) {
                 </h3>
                 {author.bio && (
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
-                    {author.bio}
+                    {typeof author.bio === 'string' ? author.bio : ''}
                   </p>
                 )}
               </Link>

@@ -107,7 +107,7 @@ export default function PostList({
                     href={`/post/${
                       pathPrefix ? `${pathPrefix}/` : ""
                     }${post.slug.current}`}>
-                    {post.excerpt}
+                    {typeof post.excerpt === 'string' ? post.excerpt : ''}
                   </Link>
                 </p>
               )}

@@ -12,7 +12,7 @@ export async function generateMetadata({ params }) {
   if (!post) return {};
 
   const title = post.title || "Post";
-  const description = post.excerpt || undefined;
+  const description = typeof post.excerpt === 'string' ? post.excerpt : undefined;
   const url = `${baseUrl}/post/${params.slug}`;
   const ogImage = post?.mainImage?.asset?._ref ? `/api/og?slug=${params.slug}` : "/opengraph.jpg";
   const publishedTime = post.publishedAt || post._createdAt || undefined;
@@ -72,7 +72,7 @@ export default async function PostDefault({ params }) {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post?.title,
-    description: post?.excerpt,
+    description: typeof post?.excerpt === 'string' ? post.excerpt : undefined,
     author: post?.author?.name ? { '@type': 'Person', name: post.author.name } : undefined,
     datePublished: post?.publishedAt || post?._createdAt,
     dateModified: post?._updatedAt || post?.publishedAt || post?._createdAt,
