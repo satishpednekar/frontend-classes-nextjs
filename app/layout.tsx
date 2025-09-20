@@ -179,7 +179,6 @@ export const metadata: Metadata = {
   },
   other: {
     'msvalidate.01': process.env.BING_SITE_VERIFICATION || '',
-    'ezoic-site-verification': 'jFhXAnlrCrVOxih7HTcMxp88YJjsU3',
   },
   category: 'technology',
   classification: 'Technology Blog',
@@ -235,55 +234,6 @@ export default function RootLayout({
         >
           {JSON.stringify(organizationLdJson)}
         </Script>
-        <Script
-          src="https://cmp.gatekeeperconsent.com/min.js"
-          data-cfasync="false"
-          strategy="afterInteractive"
-        />
-        <Script
-          src="https://the.gatekeeperconsent.com/cmp.min.js"
-          data-cfasync="false"
-          strategy="afterInteractive"
-        />
-        <Script
-          async
-          src="//www.ezojs.com/ezoic/sa.min.js"
-          strategy="afterInteractive"
-        />
-        <Script
-          id="ezoic-standalone"
-          strategy="afterInteractive"
-        >
-          {`
-            window.ezstandalone = window.ezstandalone || {};
-            ezstandalone.cmd = ezstandalone.cmd || [];
-          `}
-        </Script>
-        <Script
-          id="ezoic-show-ads"
-          strategy="afterInteractive"
-        >
-          {`
-            ezstandalone.cmd.push(function () {
-              ezstandalone.showAds();
-            });
-          `}
-        </Script>
-        {process.env.NODE_ENV === 'development' && (
-          <Script
-            id="ezoic-debugger"
-            strategy="afterInteractive"
-          >
-            {`
-              // Enable Ezoic debugger in development
-              if (window.location.search.includes('ez_js_debugger=1')) {
-                ezstandalone.cmd.push(function () {
-                  ezstandalone.debug = true;
-                });
-              }
-            `}
-          </Script>
-        )}
       </head>
       <body className="antialiased text-gray-800 dark:bg-black dark:text-gray-400">
         <Providers>{children}</Providers>

@@ -1,3 +1,0 @@
-# This file is now managed by Ezoic via /ads.txt route
-# For the most up-to-date ads.txt, visit: https://frontendpedia.com/ads.txt
-

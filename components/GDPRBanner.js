@@ -9,7 +9,6 @@ export default function GDPRBanner() {
   const [cookiePreferences, setCookiePreferences] = useState({
     essential: true, // Always true, can't be disabled
     analytics: false,
-    advertising: false,
     preferences: false,
   });
 
@@ -28,7 +27,6 @@ export default function GDPRBanner() {
     const allAccepted = {
       essential: true,
       analytics: true,
-      advertising: true,
       preferences: true,
     };
     setCookiePreferences(allAccepted);
@@ -41,7 +39,6 @@ export default function GDPRBanner() {
     const onlyEssential = {
       essential: true,
       analytics: false,
-      advertising: false,
       preferences: false,
     };
     setCookiePreferences(onlyEssential);
@@ -155,20 +152,6 @@ export default function GDPRBanner() {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div>
-                  <h4 className="font-medium text-gray-900 dark:text-white">Advertising Cookies</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Used to deliver personalized advertisements
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={cookiePreferences.advertising}
-                  onChange={() => handlePreferenceChange("advertising")}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-              </div>
 
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <div>
