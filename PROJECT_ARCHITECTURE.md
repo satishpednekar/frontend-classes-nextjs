@@ -117,6 +117,9 @@ frontend-classes-nextjs/
 - **Structured Data**: JSON-LD for search engines
 - **Image Optimization**: Next.js Image component + Sanity CDN
 - **Core Web Vitals**: LCP monitoring and optimization
+- **Dynamic Sitemap**: Auto-generated with all pages, posts, categories, authors
+- **RSS Feed**: Automated content syndication
+- **SEO Gold Standard**: Complete coverage of all site pages
 
 ### Content Features
 - **Blog Posts**: Rich text with code blocks
