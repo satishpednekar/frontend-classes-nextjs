@@ -234,6 +234,12 @@ export default function RootLayout({
         >
           {JSON.stringify(organizationLdJson)}
         </Script>
+        <Script
+          type="text/javascript"
+          src="https://platform-api.sharethis.com/js/sharethis.js#property=68cff7ef9ac1bf93b5eb1d5c&product=inline-share-buttons"
+          strategy="afterInteractive"
+          async
+        />
       </head>
       <body className="antialiased text-gray-800 dark:bg-black dark:text-gray-400">
         <Providers>{children}</Providers>

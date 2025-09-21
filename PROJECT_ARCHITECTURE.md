@@ -128,6 +128,7 @@ frontend-classes-nextjs/
 - **Search**: Full-text search functionality
 - **Archive**: Paginated post listings
 - **RSS Feed**: Automated content syndication
+- **Social Sharing**: ShareThis integration for 40+ social channels
 
 ### Technical Features
 - **Dark Mode**: Theme switching with persistence
@@ -165,6 +166,11 @@ NEXT_PUBLIC_SOCIAL_LINKEDIN=https://linkedin.com/company/frontendpedia
 - **Edge Functions**: API routes on Vercel Edge
 - **CDN**: Global content delivery
 - **Analytics**: Real-time performance monitoring
+
+### Social Media Integration
+- **ShareThis Widget**: 40+ social sharing channels
+- **Social Sharing**: Easy content sharing across platforms
+- **Community Engagement**: Boost content reach and visibility
 
 ### Sanity Studio
 - **Admin Interface**: Accessible at `/studio`

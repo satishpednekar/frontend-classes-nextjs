@@ -103,6 +103,11 @@ export default function Post(props) {
             </Link>
           </div>
           {post.author && <AuthorCard author={post.author} />}
+          
+          {/* Social Sharing Widget */}
+          <div className="mt-8 mb-8">
+            <div className="sharethis-inline-share-buttons"></div>
+          </div>
         </article>
       </Container>
     </>
