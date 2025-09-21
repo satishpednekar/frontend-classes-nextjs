@@ -77,11 +77,20 @@ export default function Post(props) {
         </div>
       </Container>
 
-      <div className="relative z-0 mx-auto aspect-video max-w-screen-lg overflow-hidden lg:rounded-lg" style={{ position: 'relative' }}>
+      {/* Social Sharing Widget - After Title and Metadata */}
+        <Container style={{ padding: '1px !important' }}>
+        <div className="mx-auto mb-4 max-w-screen-md">
+          <div className="sharethis-inline-share-buttons"></div>
+        </div>
+      </Container>
+
+      <div
+        className="relative z-0 mx-auto aspect-video max-w-screen-lg overflow-hidden lg:rounded-lg"
+        style={{ position: "relative" }}>
         {imageProps && (
           <Image
             src={imageProps.src}
-            alt={post.mainImage?.alt || "Thumbnail"}
+            alt={post.mainImage?.alt || "Post Thumbnail Main Image"}
             loading="eager"
             fill
             sizes="100vw"
@@ -95,6 +104,12 @@ export default function Post(props) {
           <div className="prose my-3 max-w-screen-lg dark:prose-invert prose-a:text-blue-600">
             {post.body && <PortableText value={post.body} />}
           </div>
+
+          {/* Social Sharing Widget - Above View all posts */}
+          <div className="mb-6 mt-8 flex justify-center">
+            <div className="sharethis-inline-share-buttons"></div>
+          </div>
+
           <div className="mb-7 mt-7 flex justify-center">
             <Link
               href="/"
@@ -103,11 +118,6 @@ export default function Post(props) {
             </Link>
           </div>
           {post.author && <AuthorCard author={post.author} />}
-          
-          {/* Social Sharing Widget */}
-          <div className="mt-8 mb-8">
-            <div className="sharethis-inline-share-buttons"></div>
-          </div>
         </article>
       </Container>
     </>
