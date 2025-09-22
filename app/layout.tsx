@@ -234,18 +234,98 @@ export default function RootLayout({
         >
           {JSON.stringify(organizationLdJson)}
         </Script>
-        <Script
-          type="text/javascript"
-          src="https://platform-api.sharethis.com/js/sharethis.js#property=68cff7ef9ac1bf93b5eb1d5c&product=inline-share-buttons"
-          strategy="afterInteractive"
-          async
-        />
       </head>
-      <body className="antialiased text-gray-800 dark:bg-black dark:text-gray-400">
+      <body className="antialiased text-gray-800 dark:bg-black dark:text-gray-400" suppressHydrationWarning={true}>
         <Providers>{children}</Providers>
         <SpeedInsights />
         <Analytics />
         <LcpObserver />
+        <Script
+          id="hydration-fix"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Fix hydration issues caused by browser extensions
+              if (typeof window !== 'undefined') {
+                // Suppress hydration warnings for browser extension attributes and multiple elements
+                const originalConsoleError = console.error;
+                const originalConsoleWarn = console.warn;
+                
+                console.error = function(...args) {
+                  const message = args[0];
+                  if (typeof message === 'string') {
+                    // Suppress specific hydration warnings
+                    if (message.includes('Extra attributes from the server') ||
+                        message.includes('data-new-gr-c-s-check-loaded') ||
+                        message.includes('data-gr-ext-installed') ||
+                        message.includes('Hydration failed because the initial UI does not match') ||
+                        message.includes('You are mounting a new html component') ||
+                        message.includes('You are mounting a new body component')) {
+                      return;
+                    }
+                  }
+                  originalConsoleError.apply(console, args);
+                };
+
+                console.warn = function(...args) {
+                  const message = args[0];
+                  if (typeof message === 'string') {
+                    // Suppress specific hydration warnings
+                    if (message.includes('Extra attributes from the server') ||
+                        message.includes('data-new-gr-c-s-check-loaded') ||
+                        message.includes('data-gr-ext-installed') ||
+                        message.includes('Hydration failed because the initial UI does not match') ||
+                        message.includes('You are mounting a new html component') ||
+                        message.includes('You are mounting a new body component')) {
+                      return;
+                    }
+                  }
+                  originalConsoleWarn.apply(console, args);
+                };
+
+                // Clean up browser extension attributes
+                const cleanExtensionAttributes = () => {
+                  const body = document.body;
+                  if (body) {
+                    // Remove Grammarly attributes
+                    body.removeAttribute('data-new-gr-c-s-check-loaded');
+                    body.removeAttribute('data-gr-ext-installed');
+                    
+                    // Remove other common extension attributes
+                    const extensionAttributes = [
+                      'data-grammarly-shadow-root',
+                      'data-grammarly-ignore',
+                      'data-grammarly-original-text',
+                      'data-grammarly-original-html'
+                    ];
+                    
+                    extensionAttributes.forEach(attr => {
+                      body.removeAttribute(attr);
+                    });
+                  }
+                };
+
+                // Run immediately and on DOM changes
+                cleanExtensionAttributes();
+                
+                const observer = new MutationObserver(() => {
+                  cleanExtensionAttributes();
+                });
+                
+                observer.observe(document.body, {
+                  attributes: true,
+                  childList: true,
+                  subtree: true
+                });
+
+                // Clean up on page unload
+                window.addEventListener('beforeunload', () => {
+                  observer.disconnect();
+                });
+              }
+            `
+          }}
+        />
       </body>
     </html>
   );

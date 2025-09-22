@@ -8,6 +8,7 @@ import { parseISO, format } from "date-fns";
 
 import CategoryLabel from "@/components/blog/category";
 import AuthorCard from "@/components/blog/authorCard";
+import SocialShareButtons from "@/components/SocialShareButtons";
 
 export default function Post(props) {
   const { loading, post } = props;
@@ -80,7 +81,14 @@ export default function Post(props) {
       {/* Social Sharing Widget - After Title and Metadata */}
         <Container style={{ padding: '1px !important' }}>
         <div className="mx-auto mb-4 max-w-screen-md">
-          <div className="sharethis-inline-share-buttons"></div>
+          <SocialShareButtons 
+            url={post.slug ? `https://www.frontendpedia.com/post/${post.slug.current}` : ''}
+            title={post.title}
+            description={post.excerpt}
+            variant="default"
+            showCounts={true}
+            className="justify-center"
+          />
         </div>
       </Container>
 
@@ -107,7 +115,13 @@ export default function Post(props) {
 
           {/* Social Sharing Widget - Above View all posts */}
           <div className="mb-6 mt-8 flex justify-center">
-            <div className="sharethis-inline-share-buttons"></div>
+            <SocialShareButtons 
+              url={post.slug ? `https://www.frontendpedia.com/post/${post.slug.current}` : ''}
+              title={post.title}
+              description={post.excerpt}
+              variant="compact"
+              showCounts={true}
+            />
           </div>
 
           <div className="mb-7 mt-7 flex justify-center">
