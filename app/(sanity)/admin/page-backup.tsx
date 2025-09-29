@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   ChartBarIcon,
   ShareIcon,
@@ -50,7 +50,7 @@ export default function AdminDashboard() {
     endDate: new Date().toISOString().split('T')[0]
   });
 
-  const fetchAnalyticsData = async () => {
+  const fetchAnalyticsData = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -70,9 +70,9 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange.startDate, dateRange.endDate]);
 
-  const fetchBrandMentionData = async () => {
+  const fetchBrandMentionData = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -92,7 +92,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange.startDate, dateRange.endDate]);
 
   const startCrawl = async () => {
     try {
@@ -128,7 +128,7 @@ export default function AdminDashboard() {
     } else {
       fetchBrandMentionData();
     }
-  }, [dateRange, activeTab]);
+  }, [activeTab, fetchAnalyticsData, fetchBrandMentionData]);
 
   const StatCard = ({ title, value, icon: Icon, color = "blue" }: {
     title: string;

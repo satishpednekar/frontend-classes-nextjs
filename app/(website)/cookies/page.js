@@ -27,7 +27,7 @@ export default function CookiePolicy() {
               They are widely used to make websites work more efficiently and to provide information to website owners.
             </p>
             <p className="text-gray-700 dark:text-gray-300">
-              Cookies allow a website to recognize a user's device and remember information about their visit, 
+              Cookies allow a website to recognize a user&apos;s device and remember information about their visit, 
               such as their preferred language and other settings.
             </p>
           </section>
@@ -132,7 +132,7 @@ export default function CookiePolicy() {
               after seeing this banner, you consent to our use of cookies as described in this policy.
             </p>
             <p className="text-gray-700 dark:text-gray-300">
-              You can change your cookie preferences at any time by clicking the "Cookie Settings" link in our footer.
+              You can change your cookie preferences at any time by clicking the &quot;Cookie Settings&quot; link in our footer.
             </p>
           </section>
 
@@ -142,7 +142,7 @@ export default function CookiePolicy() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
               We may update this cookie policy from time to time. We will notify you of any changes by posting 
-              the new cookie policy on this page and updating the "Last updated" date.
+              the new cookie policy on this page and updating the &quot;Last updated&quot; date.
             </p>
           </section>
 
