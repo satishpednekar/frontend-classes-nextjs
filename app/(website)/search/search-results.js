@@ -2,7 +2,7 @@ import PostList from "@/components/postlist";
 import { searchPosts } from "@/lib/sanity/client";
 
 export default async function SearchResults({ searchParams }) {
-  const query = searchParams.q || '';
+  const query = searchParams.q || "";
   const posts = query ? await searchPosts(query) : [];
 
   return (
@@ -12,11 +12,11 @@ export default async function SearchResults({ searchParams }) {
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {posts.length > 0 ? (
               <>
-                Found <span className="font-semibold text-blue-600 dark:text-blue-400">{posts.length}</span> result{posts.length === 1 ? '' : 's'} for: <span className="font-semibold">"{query}"</span>
+                Found <span className="font-semibold text-blue-600 dark:text-blue-400">{posts.length}</span> result{posts.length === 1 ? "" : "s"} for: <span className="font-semibold">&quot;{query}&quot;</span>
               </>
             ) : (
               <>
-                Search results for: <span className="font-semibold">"{query}"</span>
+                Search results for: <span className="font-semibold">&quot;{query}&quot;</span>
               </>
             )}
           </p>
@@ -31,7 +31,7 @@ export default async function SearchResults({ searchParams }) {
               No posts found
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              No posts found for "<span className="font-semibold">{query}</span>". Try different keywords.
+              No posts found for &quot;<span className="font-semibold">{query}</span>&quot;. Try different keywords.
             </p>
             <div className="text-sm text-gray-500 dark:text-gray-400">
               <p>Try searching for:</p>

@@ -23,7 +23,7 @@ export default function TermsOfService() {
               Acceptance of Terms
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
-              By accessing and using Frontendpedia ("the Website"), you accept and agree to be bound by the terms and provision of this agreement. 
+              By accessing and using Frontendpedia (&quot;the Website&quot;), you accept and agree to be bound by the terms and provision of this agreement. 
               If you do not agree to abide by the above, please do not use this service.
             </p>
           </section>
@@ -81,7 +81,7 @@ export default function TermsOfService() {
               Disclaimer
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              The materials on Frontendpedia are provided on an 'as is' basis. Frontendpedia makes no warranties, 
+              The materials on Frontendpedia are provided on an &apos;as is&apos; basis. Frontendpedia makes no warranties, 
               expressed or implied, and hereby disclaims and negates all other warranties including without limitation, 
               implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement 
               of intellectual property or other violation of rights.
@@ -126,7 +126,7 @@ export default function TermsOfService() {
             <p className="text-gray-700 dark:text-gray-300">
               Frontendpedia has not reviewed all of the sites linked to our website and is not responsible for the 
               contents of any such linked site. The inclusion of any link does not imply endorsement by Frontendpedia 
-              of the site. Use of any such linked website is at the user's own risk.
+              of the site. Use of any such linked website is at the user&apos;s own risk.
             </p>
           </section>
 

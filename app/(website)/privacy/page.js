@@ -55,14 +55,14 @@ export default function PrivacyPolicy() {
               Google Advertising and Cookies
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              <strong>Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to your website or other websites.</strong>
+              <strong>Third-party vendors, including Google, use cookies to serve ads based on a user&apos;s prior visits to your website or other websites.</strong>
             </p>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              <strong>Google's use of advertising cookies enables it and its partners to serve ads to your users based on their visit to your sites and/or other sites on the Internet.</strong>
+              <strong>Google&apos;s use of advertising cookies enables it and its partners to serve ads to your users based on their visit to your sites and/or other sites on the Internet.</strong>
             </p>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Ads Settings</a>. 
-              Alternatively, you can direct users to opt out of a third-party vendor's use of cookies for personalized advertising by visiting <a href="https://www.aboutads.info" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">www.aboutads.info</a>.
+              Alternatively, you can direct users to opt out of a third-party vendor&apos;s use of cookies for personalized advertising by visiting <a href="https://www.aboutads.info" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">www.aboutads.info</a>.
             </p>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               We also work with other third-party vendors and ad networks that may serve ads on our site. 
@@ -72,7 +72,7 @@ export default function PrivacyPolicy() {
             <p className="text-gray-700 dark:text-gray-300">
               You may visit the websites of these vendors to opt out of the use of cookies for personalized advertising 
               (if the vendor or ad network offers this capability). Alternatively, you can direct users to opt out of 
-              some third-party vendors' uses of cookies for personalized advertising by visiting <a href="https://www.aboutads.info" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">www.aboutads.info</a>.
+              some third-party vendors&apos; uses of cookies for personalized advertising by visiting <a href="https://www.aboutads.info" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">www.aboutads.info</a>.
             </p>
           </section>
 
@@ -113,7 +113,7 @@ export default function PrivacyPolicy() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
               We may update this privacy policy from time to time. We will notify you of any changes 
-              by posting the new privacy policy on this page and updating the "Last updated" date.
+              by posting the new privacy policy on this page and updating the &quot;Last updated&quot; date.
             </p>
           </section>
 

@@ -74,7 +74,7 @@ export default function GDPRBanner() {
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. 
-                By clicking "Accept All", you consent to our use of cookies.{" "}
+                By clicking &quot;Accept All&quot;, you consent to our use of cookies.{" "}
                 <a 
                   href="/privacy" 
                   className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
