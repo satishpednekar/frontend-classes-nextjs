@@ -136,6 +136,8 @@ frontend-classes-nextjs/
 - **TypeScript**: Type safety throughout
 - **Error Handling**: Graceful error boundaries
 - **Loading States**: Skeleton screens and loading indicators
+- **Auth UX**: Social sign-in buttons now respect the `callbackUrl` supplied by NextAuth, so users return to the dashboard after authenticating.
+- **Profile Images**: Remote avatars from Google/GitHub are allowed via `next.config.ts` to support social logins showing the user’s picture.
 
 ## Environment Configuration
 

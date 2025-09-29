@@ -59,5 +59,7 @@ Open Source / Free Stack (Current State)
 Notes
 - Keep the two apps deployed as separate Vercel projects for clean isolation and independent releases.
 - When you’re ready to add auth/payments/DB to the Platform, we’ll introduce NextAuth, Stripe, and Vercel Postgres/Redis using only open-source SDKs and free tiers.
+- Social auth: the platform sign-in page now forwards users back to their original destination using NextAuth’s `callbackUrl`. If you deep-link users to a protected route, append `?callbackUrl=<path>` and they’ll be returned to the dashboard after Google/GitHub login.
+- Avatar images from Google/GitHub require the remote domains declared in `next.config.ts` (`lh3.googleusercontent.com`, `avatars.githubusercontent.com`). Restart the dev server after updating that config.
 
 

@@ -1,12 +1,14 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react";
 import React, { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session, status } = useSession();
 
 function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
   e.stopPropagation();
@@ -26,12 +28,12 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
           <Image
             width={44}
             height={44}
-            src="/images/user/owner.jpg"
+            src={(session?.user?.image as string) || "/images/user/owner.jpg"}
             alt="User"
           />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+        <span className="block mr-1 font-medium text-theme-sm">{session?.user?.name || "Guest"}</span>
 
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
@@ -60,10 +62,10 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Musharof Chowdhury
+            {session?.user?.name || "Guest"}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            randomuser@pimjo.com
+            {session?.user?.email || "Not signed in"}
           </span>
         </div>
 
@@ -144,9 +146,10 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
             </DropdownItem>
           </li>
         </ul>
-        <Link
-          href="/signin"
-          className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+        {status === "authenticated" ? (
+        <button
+          onClick={() => signOut()}
+          className="flex items-center gap-3 px-3 py-2 mt-3 w-full text-left font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         >
           <svg
             className="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300"
@@ -164,7 +167,26 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
             />
           </svg>
           Sign out
-        </Link>
+        </button>
+        ) : (
+        <button
+          onClick={() => signIn()}
+          className="flex items-center gap-3 px-3 py-2 mt-3 w-full text-left font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+        >
+          <svg
+            className="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M10.75 5.75C10.75 5.33579 11.0858 5 11.5 5H18.5C18.9142 5 19.25 5.33579 19.25 5.75V18.25C19.25 18.6642 18.9142 19 18.5 19H11.5C11.0858 19 10.75 18.6642 10.75 18.25C10.75 17.8358 11.0858 17.5 11.5 17.5H17.75V6.5H11.5C11.0858 6.5 10.75 6.16421 10.75 5.75Z" fill="currentColor"/>
+            <path d="M13.0303 12.5303C12.7374 12.2374 12.7374 11.7626 13.0303 11.4697L15.2803 9.21967C15.5732 8.92678 16.0481 8.92678 16.341 9.21967C16.6339 9.51256 16.6339 9.98744 16.341 10.2803L15.0607 11.5607H4.75C4.33579 11.5607 4 11.2249 4 10.8107C4 10.3965 4.33579 10.0607 4.75 10.0607H15.0607L16.341 11.341C16.6339 11.6339 16.6339 12.1088 16.341 12.4017C16.0481 12.6946 15.5732 12.6946 15.2803 12.4017L13.0303 12.5303Z" fill="currentColor"/>
+          </svg>
+          Sign in
+        </button>
+        )}
       </Dropdown>
     </div>
   );

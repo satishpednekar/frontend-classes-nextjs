@@ -1,8 +1,6 @@
-import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 
-// Minimal, DB-less setup for MVP. Later: add Prisma adapter.
 export const authOptions = {
   providers: [
     Google({
@@ -18,20 +16,15 @@ export const authOptions = {
   ],
   trustHost: true,
   session: { strategy: "jwt" as const },
-  pages: {
-    signIn: "/signin",
-  },
   callbacks: {
-    async jwt({ token, account, profile }) {
-      // Infer role from env ADMIN_EMAILS (comma separated) for MVP
+    async jwt({ token }) {
       const adminList = (process.env.ADMIN_EMAILS || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
       if (token?.email && adminList.includes(token.email.toLowerCase())) {
         (token as any).role = "admin";
       } else {
         (token as any).role = "user";
       }
-      // Default subscription tier
-      (token as any).tier = "free";
+      (token as any).tier = (token as any).tier || "free";
       return token;
     },
     async session({ session, token }) {
@@ -42,7 +35,5 @@ export const authOptions = {
   },
 };
 
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
 
 
