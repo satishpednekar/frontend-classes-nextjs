@@ -1,0 +1,794 @@
+// Frontendpedia SaaS Platform - Database Schema
+// This schema defines the complete data model for user profiles, learning tracking,
+// roles, permissions, and subscription management
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================================================
+// CORE USER & AUTHENTICATION
+// ============================================================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  password      String?   // For email/password auth (hashed)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLoginAt   DateTime?
+  isActive      Boolean   @default(true)
+  isSuspended   Boolean   @default(false)
+
+  // Relations
+  profile            UserProfile?
+  accounts           Account[]
+  sessions           Session[]
+  roles              UserRole[]
+  permissions        UserPermission[]
+  subscription       Subscription?
+  learningPaths      LearningPath[]
+  bookmarks          Bookmark[]
+  notes              Note[]
+  progress           ProgressTracking[]
+  activityLogs       ActivityLog[]
+  notificationPrefs  NotificationPreference?
+  achievements       UserAchievement[]
+  quizAttempts       QuizAttempt[]
+  certificates       Certificate[]
+
+  @@index([email])
+  @@index([isActive, isSuspended])
+  @@map("users")
+}
+
+// NextAuth Account model
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+// NextAuth Session model
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// NextAuth Verification Token
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================================================
+// USER PROFILE & LEARNING PREFERENCES
+// ============================================================================
+
+model UserProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Personal Information
+  firstName     String?
+  lastName      String?
+  displayName   String?
+  bio           String?        @db.Text
+  avatar        String?
+  phoneNumber   String?
+  dateOfBirth   DateTime?
+  country       String?
+  city          String?
+  timezone      String?        @default("UTC")
+  language      String?        @default("en")
+
+  // Professional Information
+  jobTitle         String?
+  company          String?
+  yearsExperience  Int?           @default(0)
+  linkedinUrl      String?
+  githubUrl        String?
+  portfolioUrl     String?
+  websiteUrl       String?
+
+  // Learning Profile
+  experienceLevel  ExperienceLevel @default(BEGINNER)
+  learningGoals    String[]        // Array of goal strings
+  interests        String[]        // Array of interest/topic strings
+  skillLevel       Json?           // {javascript: 8, react: 7, typescript: 6}
+  preferredLearningStyle LearningStyle @default(MIXED)
+  weeklyLearningHours    Int?           @default(5)
+  
+  // Audience Segmentation
+  audienceType     AudienceType    @default(FREE_USER)
+  domain           String?         // e.g., "frontend", "fullstack", "design"
+  industry         String?         // e.g., "fintech", "healthcare", "ecommerce"
+  
+  // Tracking & Analytics
+  totalLearningMinutes Int          @default(0)
+  streakDays           Int          @default(0)
+  longestStreak        Int          @default(0)
+  lastActiveDate       DateTime?
+  onboardingCompleted  Boolean      @default(false)
+  onboardingStep       Int          @default(0)
+  
+  // Privacy & Communication
+  isProfilePublic      Boolean      @default(false)
+  allowAnalytics       Boolean      @default(true)
+  allowMarketing       Boolean      @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([audienceType])
+  @@index([experienceLevel])
+  @@map("user_profiles")
+}
+
+// ============================================================================
+// ROLES, PERMISSIONS & ACCESS CONTROL
+// ============================================================================
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "admin", "pro_user", "free_user", "instructor", "moderator"
+  displayName String   // Human-readable name
+  description String?  @db.Text
+  priority    Int      @default(0) // Higher priority = more powerful
+  isSystem    Boolean  @default(false) // System roles cannot be deleted
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@index([name])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "user:read", "content:create", "admin:dashboard"
+  displayName String   // Human-readable name
+  description String?  @db.Text
+  resource    String   // e.g., "user", "content", "subscription"
+  action      String   // e.g., "read", "create", "update", "delete"
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  // Relations
+  roles RolePermission[]
+  users UserPermission[]
+
+  @@index([resource, action])
+  @@map("permissions")
+}
+
+// Junction table for Role-Permission many-to-many
+model RolePermission {
+  id           String   @id @default(cuid())
+  roleId       String
+  permissionId String
+  grantedAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+// User's assigned roles
+model UserRole {
+  id         String   @id @default(cuid())
+  userId     String
+  roleId     String
+  assignedAt DateTime @default(now())
+  assignedBy String?  // userId of admin who assigned
+  expiresAt  DateTime? // Optional expiry for temporary roles
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+// User's direct permissions (override/supplement role permissions)
+model UserPermission {
+  id           String   @id @default(cuid())
+  userId       String
+  permissionId String
+  grantedAt    DateTime @default(now())
+  grantedBy    String?  // userId of admin who granted
+  expiresAt    DateTime? // Optional expiry
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permissionId])
+  @@index([userId])
+  @@index([permissionId])
+  @@map("user_permissions")
+}
+
+// ============================================================================
+// SUBSCRIPTION & BILLING
+// ============================================================================
+
+model Subscription {
+  id                String             @id @default(cuid())
+  userId            String             @unique
+  tier              SubscriptionTier   @default(FREE)
+  status            SubscriptionStatus @default(ACTIVE)
+  
+  // Stripe Integration
+  stripeCustomerId       String?  @unique
+  stripeSubscriptionId   String?  @unique
+  stripePriceId          String?
+  stripeCurrentPeriodEnd DateTime?
+  
+  // Billing
+  billingCycle      BillingCycle? @default(MONTHLY)
+  amount            Decimal?      @db.Decimal(10, 2)
+  currency          String?       @default("USD")
+  
+  // Lifecycle
+  startDate         DateTime      @default(now())
+  endDate           DateTime?
+  trialEndsAt       DateTime?
+  canceledAt        DateTime?
+  cancelAtPeriodEnd Boolean       @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices         Invoice[]
+  subscriptionLogs SubscriptionLog[]
+
+  @@index([userId])
+  @@index([stripeCustomerId])
+  @@index([status, tier])
+  @@map("subscriptions")
+}
+
+model Invoice {
+  id             String        @id @default(cuid())
+  subscriptionId String
+  stripeInvoiceId String?     @unique
+  
+  amount         Decimal       @db.Decimal(10, 2)
+  currency       String        @default("USD")
+  status         InvoiceStatus @default(DRAFT)
+  
+  invoiceDate    DateTime      @default(now())
+  dueDate        DateTime?
+  paidAt         DateTime?
+  
+  invoiceUrl     String?
+  hostedInvoiceUrl String?
+  invoicePdf     String?
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([status])
+  @@map("invoices")
+}
+
+model SubscriptionLog {
+  id             String   @id @default(cuid())
+  subscriptionId String
+  event          String   // e.g., "upgraded", "downgraded", "canceled", "renewed"
+  fromTier       SubscriptionTier?
+  toTier         SubscriptionTier?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@map("subscription_logs")
+}
+
+// ============================================================================
+// LEARNING CONTENT & PATHS
+// ============================================================================
+
+model Content {
+  id          String      @id @default(cuid())
+  title       String
+  slug        String      @unique
+  description String?     @db.Text
+  type        ContentType
+  source      ContentSource @default(PLATFORM)
+  
+  // Content Details
+  url         String?
+  thumbnailUrl String?
+  duration    Int?        // in minutes
+  difficulty  Difficulty  @default(INTERMEDIATE)
+  tags        String[]
+  topics      String[]
+  
+  // Metadata
+  authorId    String?
+  publishedAt DateTime?
+  isPublic    Boolean     @default(true)
+  isFeatured  Boolean     @default(false)
+  isPremium   Boolean     @default(false)
+  
+  // Analytics
+  viewCount   Int         @default(0)
+  likeCount   Int         @default(0)
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  bookmarks        Bookmark[]
+  notes            Note[]
+  learningPathItems LearningPathItem[]
+  progress         ProgressTracking[]
+
+  @@index([slug])
+  @@index([type, isPublic])
+  @@index([isPremium, isFeatured])
+  @@map("content")
+}
+
+model LearningPath {
+  id          String            @id @default(cuid())
+  userId      String
+  title       String
+  description String?           @db.Text
+  status      LearningPathStatus @default(IN_PROGRESS)
+  progress    Int               @default(0) // 0-100
+  
+  isCustom    Boolean           @default(false)
+  isPublic    Boolean           @default(false)
+  estimatedHours Int?
+  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  completedAt DateTime?
+
+  user  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items LearningPathItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("learning_paths")
+}
+
+model LearningPathItem {
+  id              String                @id @default(cuid())
+  pathId          String
+  contentId       String
+  order           Int
+  status          LearningItemStatus    @default(NOT_STARTED)
+  isRequired      Boolean               @default(true)
+  
+  startedAt       DateTime?
+  completedAt     DateTime?
+  estimatedMinutes Int?
+
+  path    LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  content Content      @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([pathId, contentId])
+  @@index([pathId, order])
+  @@map("learning_path_items")
+}
+
+// ============================================================================
+// USER ENGAGEMENT & TRACKING
+// ============================================================================
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  contentId String
+  note      String?  @db.Text
+  tags      String[]
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, contentId])
+  @@index([userId])
+  @@map("bookmarks")
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  userId    String
+  contentId String?  // Optional: can be standalone notes
+  title     String?
+  body      String   @db.Text
+  tags      String[]
+  isPrivate Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content Content? @relation(fields: [contentId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([contentId])
+  @@map("notes")
+}
+
+model ProgressTracking {
+  id              String   @id @default(cuid())
+  userId          String
+  contentId       String
+  progress        Int      @default(0) // 0-100
+  timeSpentMinutes Int     @default(0)
+  lastPosition    Int?     // For videos/courses
+  completed       Boolean  @default(false)
+  startedAt       DateTime @default(now())
+  completedAt     DateTime?
+  lastAccessedAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, contentId])
+  @@index([userId, completed])
+  @@map("progress_tracking")
+}
+
+// ============================================================================
+// GAMIFICATION & ACHIEVEMENTS
+// ============================================================================
+
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String
+  description String   @db.Text
+  icon        String?
+  category    String   // e.g., "learning", "streak", "social"
+  points      Int      @default(0)
+  rarity      AchievementRarity @default(COMMON)
+  
+  // Unlock criteria (JSON)
+  criteria    Json     // {type: "streak", value: 7} or {type: "completed_items", value: 10}
+  
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+  progress      Int      @default(0)
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+  @@map("user_achievements")
+}
+
+model Certificate {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String?  @db.Text
+  certificateUrl String
+  verificationCode String @unique
+  issuedAt    DateTime @default(now())
+  expiresAt   DateTime?
+  
+  metadata    Json?    // Course details, instructor, etc.
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([verificationCode])
+  @@map("certificates")
+}
+
+// ============================================================================
+// ASSESSMENTS & QUIZZES
+// ============================================================================
+
+model Quiz {
+  id          String     @id @default(cuid())
+  title       String
+  description String?    @db.Text
+  difficulty  Difficulty @default(INTERMEDIATE)
+  timeLimit   Int?       // in minutes
+  passingScore Int       @default(70) // percentage
+  
+  questions   Json       // Array of question objects
+  tags        String[]
+  
+  isPublic    Boolean    @default(true)
+  isPremium   Boolean    @default(false)
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  attempts QuizAttempt[]
+
+  @@map("quizzes")
+}
+
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  userId      String
+  quizId      String
+  
+  answers     Json     // User's answers
+  score       Int      // 0-100
+  passed      Boolean  @default(false)
+  timeSpent   Int      // in seconds
+  
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([quizId])
+  @@map("quiz_attempts")
+}
+
+// ============================================================================
+// ACTIVITY LOGS & ANALYTICS
+// ============================================================================
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String   // e.g., "view_content", "complete_item", "upgrade_subscription"
+  resource   String?  // e.g., "content", "subscription"
+  resourceId String?
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([action])
+  @@map("activity_logs")
+}
+
+// ============================================================================
+// NOTIFICATIONS
+// ============================================================================
+
+model NotificationPreference {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  // Email notifications
+  emailNewContent      Boolean @default(true)
+  emailLearningReminder Boolean @default(true)
+  emailWeeklySummary   Boolean @default(true)
+  emailPromotions      Boolean @default(false)
+  
+  // In-app notifications
+  inAppAchievements    Boolean @default(true)
+  inAppRecommendations Boolean @default(true)
+  inAppUpdates         Boolean @default(true)
+  
+  // Push notifications
+  pushEnabled          Boolean @default(false)
+  pushReminders        Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
+}
+
+model Notification {
+  id         String           @id @default(cuid())
+  userId     String?          // null for system-wide notifications
+  type       NotificationType
+  title      String
+  message    String           @db.Text
+  link       String?
+  isRead     Boolean          @default(false)
+  readAt     DateTime?
+  createdAt  DateTime         @default(now())
+  expiresAt  DateTime?
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ============================================================================
+// FEATURE FLAGS & EXPERIMENTATION
+// ============================================================================
+
+model FeatureFlag {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String?  @db.Text
+  enabled     Boolean  @default(false)
+  
+  // Targeting rules (JSON)
+  rules       Json?    // {audienceType: ["PRO_USER"], roles: ["admin"]}
+  
+  rolloutPercentage Int @default(0) // 0-100
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("feature_flags")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum ExperienceLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum LearningStyle {
+  VISUAL
+  READING
+  HANDS_ON
+  VIDEO
+  MIXED
+}
+
+enum AudienceType {
+  FREE_USER
+  PRO_USER
+  TRIAL_USER
+  ENTERPRISE_USER
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
+
+enum SubscriptionTier {
+  FREE
+  BASIC
+  PRO
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  UNPAID
+  INCOMPLETE
+  TRIALING
+}
+
+enum BillingCycle {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  VOID
+  UNCOLLECTIBLE
+}
+
+enum ContentType {
+  POST
+  VIDEO
+  PDF
+  COURSE
+  LINK
+  PODCAST
+  TUTORIAL
+  DOCUMENTATION
+}
+
+enum ContentSource {
+  PLATFORM
+  SANITY
+  EXTERNAL
+  USER_GENERATED
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum LearningPathStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum LearningItemStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+enum AchievementRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  ACHIEVEMENT
+  REMINDER
+  PROMOTION
+}

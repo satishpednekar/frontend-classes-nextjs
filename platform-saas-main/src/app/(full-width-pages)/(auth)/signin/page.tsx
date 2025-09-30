@@ -1,11 +1,23 @@
-"use client";
-import SignInForm from "@/components/auth/SignInForm";
+import { redirect } from "next/navigation";
+import React from "react";
 
-export default function SignIn() {
+import { AuthCard } from "@/components/auth/AuthCard";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import type { AnyRecord } from "@/types/utility";
+
+export default async function SignIn() {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.id) {
+    const sessionUser = session.user as AnyRecord;
+    const onboardingCompleted = Boolean(sessionUser.onboardingCompleted);
+    redirect(onboardingCompleted ? "/dashboard" : "/onboarding");
+  }
+
   return (
     <div className="grid items-stretch gap-6 lg:grid-cols-2 xl:gap-8">
       <div>
-        <SignInForm />
+        <AuthCard mode="signin" />
       </div>
       <div className="relative hidden overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-brand-50 via-white to-brand-25 p-8 dark:border-gray-800 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 lg:block">
         <div className="relative z-10 flex h-full flex-col items-center justify-center text-center">

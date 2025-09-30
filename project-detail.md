@@ -47,22 +47,39 @@ High-Level Architecture (Target)
   - Caching: Redis for feed and AI response dedupe; ISR/SSG where safe.
   - Realtime: Prefer SSE over WebSockets for chat/long operations in MVP.
 
-Domain Model (Planned – Prisma)
-- users(id, email, name, image, role[user|admin], subscription_tier[free|pro], created_at)
-- profiles(user_id, interests[], goals[], level)
-- content(id, title, slug|url, type[post|video|pdf|link], source[sanity|external|platform], tags[], difficulty, published_at)
-- bookmarks(id, user_id, content_id, created_at)
-- notes(id, user_id, content_id, body, created_at, updated_at)
-- learning_paths(id, user_id, title, status, progress%)
-- learning_path_items(id, path_id, content_id, order, status)
-- subscriptions(id, user_id, provider, status, current_period_end, plan)
-- feature_flags(id, key, enabled, audience_json)
-- ai_cache(hash, response_json, ttl)
+Domain Model (Implemented – Prisma)
+**Database:** PostgreSQL (Vercel Postgres)  
+**Complete Schema:** See `platform-saas-main/prisma/schema.prisma` and `DATABASE_DESIGN.md`
 
-Personas → UX Mapping
-- Free (Beginner): onboarding quiz → limited learning path (3–5 items), daily feed (limited), bookmarks/notes.
-- Pro (Professional): full AI-driven path, unlimited feed, progress tracking, premium items.
-- Admin: metrics (users, active pro, MRR, signups), user table, content pointers, subscription overview.
+**Core Tables:**
+- users(id, email, name, image, isActive, isSuspended, lastLoginAt)
+- user_profiles(userId, firstName, lastName, bio, experienceLevel, learningGoals[], interests[], audienceType, totalLearningMinutes, streakDays)
+- roles(name, displayName, priority, isSystem) + permissions(name, resource, action)
+- user_roles(userId, roleId, assignedAt, expiresAt) [RBAC with expiration support]
+- subscriptions(userId, tier[FREE|BASIC|PRO|ENTERPRISE], status, stripeCustomerId, stripeSubscriptionId)
+- content(title, slug, type[POST|VIDEO|PDF|COURSE|LINK], source[PLATFORM|SANITY|EXTERNAL], difficulty, isPremium)
+- learning_paths(userId, title, status, progress%) + learning_path_items(pathId, contentId, order, status)
+- progress_tracking(userId, contentId, progress, timeSpentMinutes, completed)
+- bookmarks(userId, contentId, tags[]) + notes(userId, contentId, body, tags[])
+- achievements(name, category, rarity, criteria) + user_achievements(userId, achievementId, unlockedAt)
+- quizzes(title, difficulty, questions, passingScore) + quiz_attempts(userId, quizId, score, passed)
+- activity_logs(userId, action, resource, resourceId, metadata)
+- feature_flags(key, enabled, rules, rolloutPercentage)
+
+Personas → UX Mapping (Enhanced with RBAC)
+- **Free User (Beginner)**: Onboarding quiz → limited learning path (3–5 items), daily feed (limited), bookmarks/notes. No premium content.
+- **Pro User (Professional)**: Full AI-driven path, unlimited feed, progress tracking, premium content access, certificates, advanced analytics.
+- **Trial User**: 14-day access to Pro features with conversion prompts.
+- **Enterprise User**: Custom plans, team management, advanced analytics, SSO support.
+- **Student**: Educational pricing, access to curated student paths, community features.
+- **Instructor**: Content creation tools, student management, analytics on created content.
+- **Admin**: Full system access, user management, content moderation, subscription management, KPI dashboard, feature flag control.
+
+**Role-Based Access Control:**
+- Roles: admin, instructor, moderator, pro_user, free_user
+- Permissions: Granular resource:action permissions (e.g., content:create, user:manage, admin:analytics)
+- Flexible assignment: Users can have multiple roles + direct permissions
+- Temporary access: Roles/permissions can have expiration dates
 
 Roadmap (Phased)
 1) Foundation (Week 1–2)
@@ -127,16 +144,44 @@ Risks & Mitigations
 - AI cost spikes → per-user/ip rate limits, caching, token caps.
 - Styling drift → keep design tokens in Tailwind; constrain components through `@frontendpedia/ui` later.
 
-Next Actions (Concrete)
-- Create Prisma schema + migrations; wire `Vercel Postgres` (repositories for users/content/bookmarks/notes).
-- Replace mock APIs with DB-backed controllers.
-- Implement Stripe Pro plan + gating; record KPI events.
-- Feed ingestion job + Redis cache. Render in `/feed` with filters.
+Completed Actions
+✅ **Database Design Complete**: Comprehensive Prisma schema with 30+ tables covering users, profiles, RBAC, subscriptions, content, learning paths, gamification, and analytics.
+✅ **TypeScript Types**: Full type definitions in `platform-saas-main/src/types/user-profile.ts` for type-safe development.
+✅ **Documentation**: Detailed database design document (`DATABASE_DESIGN.md`) with ERD, migration strategy, and API examples.
+✅ **User Profile Component**: React component (`UserProfileForm.tsx`) with personal, professional, learning, and privacy sections.
+
+Next Actions (Updated)
+1. **Database Setup**:
+   - Configure Vercel Postgres connection string
+   - Run `npx prisma migrate dev --name init` to create tables
+   - Run seed script to populate system roles and permissions
+   
+2. **API Implementation**:
+   - Create `/api/profile` routes (GET, POST, PUT)
+   - Create `/api/roles` and `/api/permissions` for RBAC management
+   - Implement permission checking middleware
+   
+3. **UI Integration**:
+   - Create user profile page at `/profile` or `/settings/profile`
+   - Integrate UserProfileForm component
+   - Add profile completeness indicator
+   
+4. **Stripe Integration**:
+   - Implement subscription checkout flow
+   - Set up webhook handlers for subscription events
+   - Add subscription management UI
+   
+5. **Feature Implementation**:
+   - Replace mock APIs with DB-backed controllers
+   - Implement content filtering based on subscription tier
+   - Add learning path generation from onboarding quiz
+   - Feed ingestion job + Redis cache
 
 How an LLM Should Use This Doc
 - Treat this as the ground truth for goals, guardrails, and boundaries.
 - When asked to implement features, prefer adding code under `src/lib/frontendpedia/*` with thin API controllers.
 - If a choice is ambiguous, bias toward simplicity and the roadmap priorities above.
+
 
 
 

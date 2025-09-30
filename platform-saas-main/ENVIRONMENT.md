@@ -14,16 +14,26 @@ Template
 NEXT_PUBLIC_APP_NAME=Frontendpedia Platform
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-# Auth (add when enabling NextAuth)
-# NEXTAUTH_URL=http://localhost:3000
-# NEXTAUTH_SECRET=replace-with-a-strong-secret
-# GOOGLE_CLIENT_ID=
-# GOOGLE_CLIENT_SECRET=
-# GITHUB_CLIENT_ID=
-# GITHUB_CLIENT_SECRET=
+# Auth (required)
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=replace-with-a-strong-secret
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
 
-# Database (add when enabling Prisma/Vercel Postgres)
-# DATABASE_URL=
+# Credentials Auth (optional)
+# Provide NEXTAUTH_SECRET and set ALLOW_EMAIL_SIGNIN=true to enable email/password flow
+ALLOW_EMAIL_SIGNIN=true
+
+# Database (required)
+# Copy the generated values from Vercel (Environment Variables → Storage → Postgres)
+#   DATABASE_POSTGRES_URL       → use as DATABASE_URL (pooled, pgbouncer)
+#   DATABASE_PRISMA_URL → use as PRISMA_ACCELERATE_URL (if Accelerate enabled)
+#   DATABASE_PRISMA_DIRECT_URL → use as DIRECT_URL (non-pooled)
+DATABASE_URL=""
+DIRECT_URL=""
+PRISMA_ACCELERATE_URL=""
 
 # Payments (add when enabling Stripe)
 # STRIPE_PUBLISHABLE_KEY=
@@ -34,9 +44,17 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 # SENTRY_DSN=
 ```
 
+Validation Checklist
+- [ ] NEXTAUTH_SECRET set and kept private
+- [ ] DATABASE_URL present in local and Vercel envs
+- [ ] DIRECT_URL set for Prisma migrations
+- [ ] OAuth credentials configured for Google/GitHub
+- [ ] NEXTAUTH_URL matches environment domain
+- [ ] RUN `pnpm prisma migrate deploy` before first deploy
+
 Vercel (Production/Staging)
 - Go to: Project Settings → Environment Variables
-- Add any required variables from the template above.
+- Add all required variables from the template above across environments (Development, Preview, Production).
 - Re-deploy to apply changes.
 
 

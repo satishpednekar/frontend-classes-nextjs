@@ -1,4 +1,4 @@
-import SignUpForm from "@/components/auth/SignUpForm";
+import { AuthCard } from "@/components/auth/AuthCard";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function SignUp() {
-  return <SignUpForm />;
+  return <AuthCard mode="signup" />;
 }

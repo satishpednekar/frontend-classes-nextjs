@@ -246,19 +246,169 @@ pnpm build
 - **Google Analytics**: User behavior tracking
 - **Search Console**: SEO performance data
 
+## Platform SaaS Architecture (NEW)
+
+### Database Architecture
+
+**PostgreSQL (Vercel Postgres)** with **Prisma ORM**
+
+Complete schema documentation: See `DATABASE_DESIGN.md`
+
+**Core Domain Models:**
+
+1. **User Management**
+   - `users`: Authentication and identity (NextAuth)
+   - `user_profiles`: Extended user data (50+ fields)
+   - `accounts`, `sessions`: OAuth management
+
+2. **Authorization (RBAC)**
+   - `roles`: System and custom roles
+   - `permissions`: Granular resource:action permissions
+   - `user_roles`, `role_permissions`: Many-to-many relationships
+   - Support for temporary access with expiration dates
+
+3. **Subscription & Billing**
+   - `subscriptions`: Tier management (FREE, BASIC, PRO, ENTERPRISE)
+   - `invoices`: Billing history
+   - `subscription_logs`: Audit trail
+   - Full Stripe integration
+
+4. **Learning System**
+   - `content`: Posts, videos, courses, PDFs
+   - `learning_paths`: Curated learning journeys
+   - `learning_path_items`: Path content with ordering
+   - `progress_tracking`: User progress per content item
+   - `bookmarks`, `notes`: User engagement
+
+5. **Gamification**
+   - `achievements`: Milestone definitions
+   - `user_achievements`: User unlocks
+   - `certificates`: Course completion certificates
+   - `quizzes`, `quiz_attempts`: Assessment system
+
+6. **Analytics**
+   - `activity_logs`: User action tracking
+   - `notifications`: In-app notifications
+   - `notification_preferences`: User preferences
+
+7. **System**
+   - `feature_flags`: Feature rollout control
+
+### API Architecture
+
+**REST API** built with Next.js 15 App Router:
+
+- `/api/profile` - User profile CRUD
+- `/api/roles` - Role management (planned)
+- `/api/permissions` - Permission management (planned)
+- `/api/learning-path` - Learning paths (exists, to be DB-backed)
+- `/api/content` - Content management (planned)
+- `/api/subscription` - Subscription management (planned)
+
+**Authentication:** NextAuth v4 with JWT sessions
+
+### Permission System
+
+**RBAC with Fine-Grained Permissions:**
+
+- **Roles**: admin, instructor, moderator, pro_user, free_user
+- **Permissions**: `resource:action` format (e.g., `content:create`)
+- **Flexible Assignment**: Users can have multiple roles + direct permissions
+- **Temporary Access**: Roles/permissions can expire
+
+**Utility Functions:**
+```typescript
+import { getUserPermissions, hasPermission, hasRole, isAdmin, isPro } from '@/lib/auth/permissions';
+```
+
+### User Profile System
+
+**Comprehensive Profile Fields:**
+
+- **Personal**: Name, bio, location, timezone, language
+- **Professional**: Job title, company, experience, social links
+- **Learning**: Experience level, goals, interests, learning style
+- **Tracking**: Learning minutes, streaks, progress
+- **Privacy**: Profile visibility, analytics consent
+
+**Audience Types:**
+- FREE_USER, PRO_USER, TRIAL_USER, ENTERPRISE_USER
+- STUDENT, INSTRUCTOR, ADMIN
+
+**React Component:** `UserProfileForm.tsx` with tabbed interface
+
+### Technology Stack (Platform)
+
+| Category | Technology | Purpose |
+|----------|-----------|---------|
+| Framework | Next.js 15 | App Router, RSC |
+| Database | PostgreSQL | Vercel Postgres |
+| ORM | Prisma 5 | Type-safe database access |
+| Auth | NextAuth v4 | OAuth + JWT |
+| Payments | Stripe | Subscriptions |
+| Caching | Redis | Feed cache, rate limiting |
+| Email | Resend | Transactional emails |
+| Storage | Vercel Blob | File uploads |
+| Analytics | Vercel Analytics | Performance tracking |
+
+### File Structure (Platform)
+
+```
+platform-saas-main/
+├── prisma/
+│   ├── schema.prisma           # Complete DB schema
+│   └── seed.ts                 # Initial data
+├── src/
+│   ├── app/
+│   │   ├── (admin)/            # Admin pages
+│   │   └── api/
+│   │       └── profile/        # Profile API
+│   ├── components/
+│   │   └── user-profile/       # Profile components
+│   ├── lib/
+│   │   ├── prisma.ts           # DB client
+│   │   └── auth/
+│   │       └── permissions.ts  # RBAC utilities
+│   └── types/
+│       └── user-profile.ts     # TypeScript types
+└── .env.local                  # Environment config
+```
+
+### Setup & Deployment
+
+**Quick Start:**
+1. Configure Vercel Postgres (see `SETUP_GUIDE.md`)
+2. Run migrations: `npx prisma migrate dev --name init`
+3. Seed database: `npx prisma db seed`
+4. Start dev server: `npm run dev`
+
+**Documentation:**
+- `DATABASE_DESIGN.md` - Complete schema documentation
+- `SETUP_GUIDE.md` - Step-by-step setup instructions
+- `IMPLEMENTATION_SUMMARY.md` - Implementation overview
+- `ENV_TEMPLATE.md` - Environment variables
+
 ## Future Considerations
 
-### Scalability
+### Website (Existing)
 - **CDN Integration**: Global content delivery
 - **Database Optimization**: Query performance tuning
 - **Caching Strategy**: Multi-layer caching approach
-
-### Feature Enhancements
 - **Comments System**: User engagement features
 - **Newsletter Integration**: Email marketing
 - **Advanced Search**: Faceted search capabilities
 - **Multi-language**: Internationalization support
 
+### Platform (SaaS)
+- **AI Integration**: GPT-powered learning assistant
+- **Real-time Features**: WebSocket for live collaboration
+- **Advanced Analytics**: ML-based recommendations
+- **Team Features**: Organization and team management
+- **API Gateway**: Rate limiting and quota management
+- **Mobile App**: React Native companion app
+
 ---
 
 *This architecture reference is maintained for the Frontendpedia project and should be updated as the project evolves.*
+
+**Last Updated:** September 30, 2025 - Added Platform SaaS architecture with complete database design and RBAC system.
