@@ -122,9 +122,9 @@ This document summarizes the comprehensive user profile system designed for the 
 ### 7. **Seed Script** (`platform-saas-main/prisma/seed.ts`)
 ✅ **Database initialization** with:
 
-- **5 System Roles**: admin, instructor, moderator, pro_user, free_user
-- **21 Permissions**: Covering user, content, subscription, admin resources
-- **Role-Permission Mappings**: Proper access levels for each role
+- **6 System Roles**: admin, instructor, moderator, pro_user, pro_plus_user, free_user
+- **22 Permissions**: Covering user, content, subscription, admin resources
+- **Role-Permission Mappings**: Proper access levels for each role (Free, Pro, Pro Plus)
 - **7 Sample Achievements**: For gamification
 - **4 Feature Flags**: For controlled rollouts
 
@@ -132,7 +132,25 @@ This document summarizes the comprehensive user profile system designed for the 
 
 ---
 
-### 8. **Documentation**
+### 8. **User Onboarding Flow** (`/onboarding`)
+✅ **Multi-step onboarding experience**
+
+- **Route & Middleware**: `/onboarding` guarded by middleware ensuring incomplete users complete the journey before dashboard access
+- **State Management**: `useOnboardingStore` (Zustand) managing steps, optimistic updates, resume logic
+- **API Endpoints**: `GET /api/onboarding` for context, `PATCH /api/onboarding` to persist each step
+- **Steps Implemented**:
+  1. Personal details (required) → saves profile basics
+  2. Professional snapshot (role, company, experience, links)
+  3. Learning preferences (goals, interests, experience level, commitments)
+  4. Plan selection (FREE/PRO/PRO_PLUS tiers with copy, CTA placeholders)
+  5. Completion summary → marks onboarding complete, seeds starter learning path
+- **UX Shell**: `OnboardingStepperShell` with progress indicator, email verification banner, mobile-friendly forms
+- **Loading / Error Handling**: `OnboardingJourney` + `OnboardingLoadingState` provide initial fetch spinner and retry UI
+- **Subscription/Role Sync**: PATCH handler updates subscription tier, user roles (`pro_user`, `pro_plus_user`), onboarding flags
+
+---
+
+### 10. **Documentation Updates**
 
 #### `DATABASE_DESIGN.md` (Root)
 ✅ **Comprehensive database documentation** (60+ pages):

@@ -1,8 +1,6 @@
+import OnboardingJourney from "@/components/onboarding/OnboardingJourney";
+
 export default function OnboardingPage() {
-  return (
-    <div>
-      onboarding TBD
-    </div>
-  );
+  return <OnboardingJourney />;
 }
 

@@ -31,6 +31,10 @@ Status – What’s Implemented (Platform)
 - DX / Stability
   - Hydration mismatch hardening (suppress + strip common extension attributes).
   - Tailwind v4 in platform, isolated from website’s v3.
+- Online Onboardings
+  - **Onboarding Journey**: Dedicated `/onboarding` route with guarded layout, Zustand store, API-backed 5-step flow (personal → professional → learning → plan → completion) and starter learning path seeding.
+  - **Subscription Tier Updates**: Prisma enum + seed data include `PRO_PLUS`; onboarding logic syncs roles (`pro_user`, `pro_plus_user`) and subscriptions.
+  - **Middleware Refresh**: Central middleware restored (auth + onboarding redirection).
 
 Near-Term Intent (MVP Scope)
 - Keep website untouched for SEO/content.
@@ -53,10 +57,10 @@ Domain Model (Implemented – Prisma)
 
 **Core Tables:**
 - users(id, email, name, image, isActive, isSuspended, lastLoginAt)
-- user_profiles(userId, firstName, lastName, bio, experienceLevel, learningGoals[], interests[], audienceType, totalLearningMinutes, streakDays)
+- user_profiles(userId, firstName, lastName, bio, experienceLevel, learningGoals[], interests[], audienceType, totalLearningMinutes, streakDays, onboardingCompleted, onboardingStep)
 - roles(name, displayName, priority, isSystem) + permissions(name, resource, action)
 - user_roles(userId, roleId, assignedAt, expiresAt) [RBAC with expiration support]
-- subscriptions(userId, tier[FREE|BASIC|PRO|ENTERPRISE], status, stripeCustomerId, stripeSubscriptionId)
+- subscriptions(userId, tier[FREE|PRO|PRO_PLUS|ENTERPRISE], status, stripeCustomerId, stripeSubscriptionId)
 - content(title, slug, type[POST|VIDEO|PDF|COURSE|LINK], source[PLATFORM|SANITY|EXTERNAL], difficulty, isPremium)
 - learning_paths(userId, title, status, progress%) + learning_path_items(pathId, contentId, order, status)
 - progress_tracking(userId, contentId, progress, timeSpentMinutes, completed)
@@ -76,7 +80,7 @@ Personas → UX Mapping (Enhanced with RBAC)
 - **Admin**: Full system access, user management, content moderation, subscription management, KPI dashboard, feature flag control.
 
 **Role-Based Access Control:**
-- Roles: admin, instructor, moderator, pro_user, free_user
+- Roles: admin, instructor, moderator, pro_user, pro_plus_user, free_user
 - Permissions: Granular resource:action permissions (e.g., content:create, user:manage, admin:analytics)
 - Flexible assignment: Users can have multiple roles + direct permissions
 - Temporary access: Roles/permissions can have expiration dates
@@ -149,6 +153,8 @@ Completed Actions
 ✅ **TypeScript Types**: Full type definitions in `platform-saas-main/src/types/user-profile.ts` for type-safe development.
 ✅ **Documentation**: Detailed database design document (`DATABASE_DESIGN.md`) with ERD, migration strategy, and API examples.
 ✅ **User Profile Component**: React component (`UserProfileForm.tsx`) with personal, professional, learning, and privacy sections.
+✅ **Onboarding Experience**: `/onboarding` flow implemented with API persistence, five step UI, plan selection, and completion redirect.
+✅ **Middleware Restored**: Auth + onboarding-aware route protection back in place.
 
 Next Actions (Updated)
 1. **Database Setup**:
@@ -167,14 +173,14 @@ Next Actions (Updated)
    - Add profile completeness indicator
    
 4. **Stripe Integration**:
-   - Implement subscription checkout flow
+   - Implement subscription checkout flow for Pro/Pro Plus
    - Set up webhook handlers for subscription events
    - Add subscription management UI
    
 5. **Feature Implementation**:
    - Replace mock APIs with DB-backed controllers
    - Implement content filtering based on subscription tier
-   - Add learning path generation from onboarding quiz
+   - Add learning path generation from onboarding data
    - Feed ingestion job + Redis cache
 
 How an LLM Should Use This Doc

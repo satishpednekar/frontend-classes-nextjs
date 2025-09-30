@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import React from "react";
 
+import OnboardingShellLayout from "@/components/onboarding/OnboardingShellLayout";
+
 export const metadata: Metadata = {
   title: "Complete Your Profile | Frontendpedia",
 };
 
-type OnboardingShellLayoutProps = {
+type OnboardingLayoutProps = {
   children: React.ReactNode;
 };
 
-export default function OnboardingShellLayout({ children }: OnboardingShellLayoutProps) {
-  return <div className="min-h-screen bg-slate-950 text-white">{children}</div>;
+export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
+  return <OnboardingShellLayout>{children}</OnboardingShellLayout>;
 }
 

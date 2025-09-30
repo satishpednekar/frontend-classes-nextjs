@@ -209,133 +209,84 @@ Build a hyper-personalized learning platform for frontend developers with AI-dri
 
 ### **New User Onboarding (5 Steps)**
 
-**Entry Point:** OAuth signup → Auto-creates FREE user with free_user role
+**Implementation Status:**
+- ✅ Route: `/onboarding` (App Router) with guarded layout + session validation (`OnboardingGuard`)
+- ✅ Zustand store: `useOnboardingStore` (client state, optimistic updates)
+- ✅ API endpoints: `GET /api/onboarding`, `PATCH /api/onboarding`
+- ✅ Steps implemented as components under `src/components/onboarding/steps`
+- ✅ Prisma updates: `SubscriptionTier.PRO_PLUS`, role seeding, onboarding progress columns
 
-**Step 0: Welcome Screen (Optional)**
-- "Welcome to Frontendpedia!"
-- "Personalize your learning journey in 2-3 minutes"
-- Progress: 0/4
+**Entry Point:** OAuth/Credentials signup → auto-provisioned FREE user → middleware redirects new users to `/onboarding` until completion
 
 **Step 1: Basic Info**
 ```
-Required:
-- First Name
-- Last Name
-- Display Name (auto-generated, editable)
-
-Optional:
-- Country (dropdown with flags)
+Component: StepPersonalDetails
+Fields:
+- First Name (required)
+- Last Name (required)
+- Display Name (required, auto-composed from names, editable)
+- Country (required)
 - City
-- Timezone (auto-detected)
-
-Auto-save: On blur
-Continue: When required fields filled
+- Timezone (select, default UTC)
+- Preferred language (select, default EN)
+Validation: client side + server rejects missing required fields
+Persistence: PATCH step=1 stores personal info, advances onboardingStep to 2
 ```
 
 **Step 2: Professional Background**
 ```
-All Optional (Can skip):
-- Job Title
+Component: StepProfessionalDetails
+Fields:
+- Job Title (required)
 - Company
-- Years of Experience (dropdown: 0-1, 1-3, 3-5, 5-10, 10+)
-- Domain (Frontend, Backend, Fullstack, Mobile, DevOps, Design)
-- Industry (Fintech, Healthcare, E-commerce, SaaS, etc.)
-- LinkedIn URL
-- GitHub URL
-- Portfolio URL
-
-Auto-save: On blur
-Continue: Can skip entirely
+- Years of Experience (bucketed select)
+- Domain
+- Industry
+- LinkedIn / GitHub / Portfolio / Website URLs
+UX: contextual helper panel instead of notes textarea
+Persistence: PATCH step=2 stores professional profile, onboardingStep=3
 ```
 
-**Step 3: Learning Profile** (Most Important for Personalization)
+**Step 3: Learning Profile**
 ```
-Required:
-- Experience Level (cards):
-  □ Beginner - "Just starting out"
-  □ Intermediate - "Know basics, want to level up"
-  □ Advanced - "Years of experience, want mastery"
-  □ Expert - "Deep expertise, stay current"
-
-- Learning Goals (multi-select, min 1, max 5):
-  □ Master React
-  □ Learn TypeScript
-  □ Build Portfolio
-  □ Get Senior Role
-  □ Learn System Design
-  □ Improve Performance Skills
-  + Custom goal input
-
-- Interests (tags, min 1, max 10):
-  [React] [Vue] [TypeScript] [Node.js] [Next.js]
-  [CSS] [Testing] [Performance] [Architecture]
-  + Add custom
-
-- Preferred Learning Style (cards):
-  □ Video Tutorials
-  □ Reading Articles
-  □ Hands-on Practice
-  □ Mixed Approach
-
-- Weekly Time Commitment:
-  Slider: 1-30 hours/week (default: 5)
-
-Continue: When all required filled
+Component: StepLearningPreferences
+Collects:
+- Experience Level (card select)
+- Learning Goals (chip select + custom add, min 1, max 5)
+- Interests (chip select + custom add, min 1, max 10)
+- Preferred Learning Style (select)
+- Weekly hours (range 1-30)
+Validations: at least 1 goal + interest, hours > 0
+Persistence: PATCH step=3 writes arrays + preferences, onboardingStep=4
 ```
 
-**Step 4: Choose Your Plan**
+**Step 4: Plan Selection**
 ```
-Three pricing cards (side-by-side, stacked mobile):
-
-FREE:
-- $0/month
-- 10 AI credits/month
-- 1 active learning path
-- Basic content access
-- Community access
-[Continue as Free] → Step 5
-
-PRO (Highlighted):
-- $19/month or $190/year (save $38)
-- 100 AI credits/month
-- Unlimited learning paths
-- All content access
-- AI recommendations
-- Monthly skill assessments
-- Certificates
-[Start 14-day Trial] → Stripe Checkout
-
-PRO PLUS (Best Value):
-- $49/month or $490/year (save $98)
-- 500 AI credits/month
-- Everything in PRO +
-- Weekly skill assessments
-- Career guidance
-- Bring your own LLM key (unlimited)
-- Premium templates
-- Priority support
-[Start 14-day Trial] → Stripe Checkout
-
-User Actions:
-A) Continue as Free → Stays FREE, goes to Step 5
-B) Click trial → Stripe checkout → Webhook updates subscription → Returns to Step 5
+Component: StepPlanSelection
+Plans: Free, Pro, Pro Plus (highlighted, dynamic copy)
+Action: choose tier → PATCH step=4 updates subscription + roles, onboardingStep=5
+Stripe: placeholder messaging (actual checkout deferred to payments feature)
 ```
 
 **Step 5: Completion**
 ```
-- "You're all set! 🎉"
-- Summary of choices
-- Plan selected
-- Credits available
-- Next steps (personalized)
+Component: StepCompletion
+Summary cards: Personal, Professional, Learning, Plan snapshot
+Action: Finish → PATCH step=5 marks onboardingCompleted=true, seeds starter learning path, redirects to /dashboard
+```
 
-[Go to Dashboard] → /dashboard
+**Support Details:**
+- Toast banner for unverified email via OnboardingStepperShell
+- Loading & retry state handled by OnboardingJourney + OnboardingLoadingState
+- Middleware (`src/app/middleware.ts`): blocks core routes until onboardingCompleted
+- API uses Prisma upserts, role assignment (`free_user`, `pro_user`, `pro_plus_user`) + subscription tier mapping
+- State store normalises step index from server, supports resume flows
 
-Backend:
-- Set onboardingCompleted = true
-- Set onboardingStep = 5
-- Create initial learning path (mock AI based on goals/interests)
-- Log onboarding_completed event
+**Next Enhancements:**
+- Stripe checkout & webhooks (Phase 5)
+- Guided tour / celebratory modal post-completion
+- Analytics events for each step
+- Auto-suggest timezone/language via browser locale
 ```
 
 ### **Returning User Flow**

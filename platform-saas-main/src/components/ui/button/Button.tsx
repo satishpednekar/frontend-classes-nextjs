@@ -8,7 +8,8 @@ interface ButtonProps {
   endIcon?: ReactNode; // Icon after the text
   onClick?: () => void; // Click handler
   disabled?: boolean; // Disabled state
-  className?: string; // Disabled state
+  loading?: boolean; // Loading state
+  className?: string; // Additional classes
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -20,6 +21,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   className = "",
   disabled = false,
+  loading = false,
 }) => {
   // Size Classes
   const sizeClasses = {
@@ -40,14 +42,23 @@ const Button: React.FC<ButtonProps> = ({
       className={`inline-flex items-center justify-center font-medium gap-2 rounded-lg transition ${className} ${
         sizeClasses[size]
       } ${variantClasses[variant]} ${
-        disabled ? "cursor-not-allowed opacity-50" : ""
+        disabled || loading ? "cursor-not-allowed opacity-50" : ""
       }`}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
     >
-      {startIcon && <span className="flex items-center">{startIcon}</span>}
-      {children}
-      {endIcon && <span className="flex items-center">{endIcon}</span>}
+      {loading ? (
+        <span className="flex items-center gap-2">
+          <span className="inline-flex h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          <span className="text-sm">{typeof children === "string" ? children : "Loading"}</span>
+        </span>
+      ) : (
+        <>
+          {startIcon && <span className="flex items-center">{startIcon}</span>}
+          {children}
+          {endIcon && <span className="flex items-center">{endIcon}</span>}
+        </>
+      )}
     </button>
   );
 };

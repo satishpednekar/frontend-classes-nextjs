@@ -708,8 +708,8 @@ enum AudienceType {
 
 enum SubscriptionTier {
   FREE
-  BASIC
   PRO
+  PRO_PLUS
   ENTERPRISE
 }
 

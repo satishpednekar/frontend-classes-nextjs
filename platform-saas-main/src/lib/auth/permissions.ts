@@ -80,7 +80,10 @@ export async function getUserPermissions(userId: string): Promise<UserPermission
     hasRole,
     hasPermission,
     isAdmin: hasRole('admin'),
-    isPro: userWithRoles.subscription?.tier === 'PRO' || userWithRoles.subscription?.tier === 'ENTERPRISE',
+    isPro:
+      userWithRoles.subscription?.tier === 'PRO' ||
+      userWithRoles.subscription?.tier === 'PRO_PLUS' ||
+      userWithRoles.subscription?.tier === 'ENTERPRISE',
     isFree: !userWithRoles.subscription || userWithRoles.subscription.tier === 'FREE',
   };
 }
@@ -171,6 +174,7 @@ export async function isPro(userId: string): Promise<boolean> {
 
   return (
     subscription?.tier === 'PRO' ||
+    subscription?.tier === 'PRO_PLUS' ||
     subscription?.tier === 'ENTERPRISE'
   ) && subscription?.status === 'ACTIVE';
 }
