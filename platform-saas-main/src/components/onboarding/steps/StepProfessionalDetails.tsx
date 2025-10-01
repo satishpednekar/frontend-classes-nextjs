@@ -20,15 +20,12 @@ const DOMAINS = ["Frontend", "Backend", "Fullstack", "Mobile", "DevOps", "Design
 const INDUSTRIES = ["SaaS", "E-commerce", "Fintech", "Healthcare", "Education", "Gaming", "Consulting"];
 
 export default function StepProfessionalDetails() {
-  const { professional, updateProfessional, submitStep, goToNextStep, goToPrevStep, isLoading } =
-    useOnboardingStore((state) => ({
-      professional: state.professional,
-      updateProfessional: state.updateProfessional,
-      submitStep: state.submitStep,
-      goToNextStep: state.goToNextStep,
-      goToPrevStep: state.goToPrevStep,
-      isLoading: state.isLoading,
-    }));
+  const professional = useOnboardingStore((state) => state.professional);
+  const updateProfessional = useOnboardingStore((state) => state.updateProfessional);
+  const submitStep = useOnboardingStore((state) => state.submitStep);
+  const goToNextStep = useOnboardingStore((state) => state.goToNextStep);
+  const goToPrevStep = useOnboardingStore((state) => state.goToPrevStep);
+  const isLoading = useOnboardingStore((state) => state.isLoading);
 
   const [error, setError] = useState<string | null>(null);
 

@@ -80,13 +80,15 @@ function toIndex(step: number | undefined): StepIndex {
 }
 
 async function fetchContext(): Promise<OnboardingContextPayload> {
-  const response = await fetch("/api/onboarding", { cache: "no-store" });
-  if (!response.ok) {
+  const response = await fetch("/api/onboarding", { cache: "no-store" }).catch(() => null);
+  if (!response || !response.ok) {
     throw new Error("Failed to load onboarding context");
   }
-  const json = (await response.json()) as { success: boolean; data?: OnboardingContextPayload; error?: string };
-  if (!json.success || !json.data) {
-    throw new Error(json.error || "Unexpected response");
+  const json = (await response.json().catch(() => null)) as
+    | { success: boolean; data?: OnboardingContextPayload; error?: string }
+    | null;
+  if (!json?.success || !json.data) {
+    throw new Error(json?.error || "Unexpected response");
   }
   return json.data;
 }
@@ -98,15 +100,17 @@ async function patchStep(payload: unknown) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
-  });
+  }).catch(() => null);
 
-  if (!response.ok) {
-    const fallback = await response.json().catch(() => ({ error: "Request failed" } as const));
-    throw new Error((fallback as { error?: string }).error || "Failed to submit step");
+  if (!response || !response.ok) {
+    const fallback = await response?.json().catch(() => ({ error: "Request failed" } as const));
+    throw new Error((fallback as { error?: string })?.error || "Failed to submit step");
   }
-  const json = (await response.json()) as { success: boolean; data?: OnboardingContextPayload; error?: string };
-  if (!json.success || !json.data) {
-    throw new Error(json.error || "Unexpected response");
+  const json = (await response.json().catch(() => null)) as
+    | { success: boolean; data?: OnboardingContextPayload; error?: string }
+    | null;
+  if (!json?.success || !json.data) {
+    throw new Error(json?.error || "Unexpected response");
   }
   return json.data;
 }

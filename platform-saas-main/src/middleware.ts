@@ -8,6 +8,7 @@ const ONBOARDING_PATH = "/onboarding";
 const DASHBOARD_PATH = "/dashboard";
 
 const PROTECTED_PREFIXES = [
+  "/",
   "/dashboard",
   "/learning-path",
   "/my-content",
@@ -60,7 +61,13 @@ export async function middleware(req: NextRequest) {
 
   const requiresAuth = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
-  if (requiresAuth && !onboardingCompleted) {
+  if (pathname === "/" && !onboardingCompleted) {
+    const onboardingUrl = new URL(ONBOARDING_PATH, req.url);
+    if (onboardingStep > 0) onboardingUrl.searchParams.set("step", onboardingStep.toString());
+    return NextResponse.redirect(onboardingUrl);
+  }
+
+  if (requiresAuth && !onboardingCompleted && !pathname.startsWith(ONBOARDING_PATH)) {
     const onboardingUrl = new URL(ONBOARDING_PATH, req.url);
     if (onboardingStep > 0) onboardingUrl.searchParams.set("step", onboardingStep.toString());
     return NextResponse.redirect(onboardingUrl);

@@ -49,16 +49,12 @@ const LEARNING_STYLES = [
 ];
 
 export default function StepLearningPreferences() {
-  const { learning, updateLearning, submitStep, goToNextStep, goToPrevStep, isLoading } = useOnboardingStore(
-    (state) => ({
-      learning: state.learning,
-      updateLearning: state.updateLearning,
-      submitStep: state.submitStep,
-      goToNextStep: state.goToNextStep,
-      goToPrevStep: state.goToPrevStep,
-      isLoading: state.isLoading,
-    }),
-  );
+  const learning = useOnboardingStore((state) => state.learning);
+  const updateLearning = useOnboardingStore((state) => state.updateLearning);
+  const submitStep = useOnboardingStore((state) => state.submitStep);
+  const goToNextStep = useOnboardingStore((state) => state.goToNextStep);
+  const goToPrevStep = useOnboardingStore((state) => state.goToPrevStep);
+  const isLoading = useOnboardingStore((state) => state.isLoading);
 
   const [error, setError] = useState<string | null>(null);
   const [customGoal, setCustomGoal] = useState("");
@@ -218,17 +214,12 @@ export default function StepLearningPreferences() {
           <div>
             <Label>Preferred learning style</Label>
             <Select
+              options={LEARNING_STYLES}
               value={learning.preferredLearningStyle}
-              onChange={(event) =>
-                updateLearning({ preferredLearningStyle: event.target.value as typeof learning.preferredLearningStyle })
+              onChange={(value) =>
+                updateLearning({ preferredLearningStyle: value as typeof learning.preferredLearningStyle })
               }
-            >
-              {LEARNING_STYLES.map((style) => (
-                <option key={style.value} value={style.value}>
-                  {style.label}
-                </option>
-              ))}
-            </Select>
+            />
           </div>
 
           <div>

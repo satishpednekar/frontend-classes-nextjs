@@ -6,17 +6,13 @@ import Button from "@/components/ui/button/Button";
 import { useOnboardingStore } from "@/stores/onboarding-store";
 
 export default function StepPlanSelection() {
-  const { plans, planTier, setPlanTier, submitStep, goToNextStep, goToPrevStep, isLoading } = useOnboardingStore(
-    (state) => ({
-      plans: state.plans,
-      planTier: state.planTier,
-      setPlanTier: state.setPlanTier,
-      submitStep: state.submitStep,
-      goToNextStep: state.goToNextStep,
-      goToPrevStep: state.goToPrevStep,
-      isLoading: state.isLoading,
-    }),
-  );
+  const plans = useOnboardingStore((state) => state.plans);
+  const planTier = useOnboardingStore((state) => state.planTier);
+  const setPlanTier = useOnboardingStore((state) => state.setPlanTier);
+  const submitStep = useOnboardingStore((state) => state.submitStep);
+  const goToNextStep = useOnboardingStore((state) => state.goToNextStep);
+  const goToPrevStep = useOnboardingStore((state) => state.goToPrevStep);
+  const isLoading = useOnboardingStore((state) => state.isLoading);
 
   const [error, setError] = useState<string | null>(null);
 

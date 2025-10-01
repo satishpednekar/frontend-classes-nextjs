@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 import OnboardingStepperShell from "@/components/onboarding/OnboardingStepperShell";
 import StepPersonalDetails from "@/components/onboarding/steps/StepPersonalDetails";
@@ -20,14 +20,16 @@ const STEPS = [
 ] as const;
 
 export default function OnboardingJourney() {
-  const { stepIndex, loadInitialContext, isLoading, error } = useOnboardingStore((state) => ({
-    stepIndex: state.stepIndex,
-    loadInitialContext: state.loadInitialContext,
-    isLoading: state.isLoading,
-    error: state.error,
-  }));
+  const stepIndex = useOnboardingStore((state) => state.stepIndex);
+  const isLoading = useOnboardingStore((state) => state.isLoading);
+  const error = useOnboardingStore((state) => state.error);
+  const loadInitialContext = useOnboardingStore((state) => state.loadInitialContext);
+
+  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
+    if (hasLoadedRef.current) return;
+    hasLoadedRef.current = true;
     void loadInitialContext();
   }, [loadInitialContext]);
 

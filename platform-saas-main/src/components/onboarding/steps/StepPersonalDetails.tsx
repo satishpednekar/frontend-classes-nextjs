@@ -28,13 +28,11 @@ const LANGUAGES = [
 ];
 
 export default function StepPersonalDetails() {
-  const { personal, updatePersonal, submitStep, goToNextStep, isLoading } = useOnboardingStore((state) => ({
-    personal: state.personal,
-    updatePersonal: state.updatePersonal,
-    submitStep: state.submitStep,
-    goToNextStep: state.goToNextStep,
-    isLoading: state.isLoading,
-  }));
+  const personal = useOnboardingStore((state) => state.personal);
+  const updatePersonal = useOnboardingStore((state) => state.updatePersonal);
+  const submitStep = useOnboardingStore((state) => state.submitStep);
+  const goToNextStep = useOnboardingStore((state) => state.goToNextStep);
+  const isLoading = useOnboardingStore((state) => state.isLoading);
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
@@ -142,7 +140,7 @@ export default function StepPersonalDetails() {
             <Input
               placeholder="Where are you based?"
               value={personal.country}
-              onChange={(event) => updatePersonal({ country: event.target.value })}
+              onChange={(event) => updatePersonal({ country: event.target.value.slice(0, 80) })}
               onBlur={() => setTouched((prev) => ({ ...prev, country: true }))}
               required
             />
@@ -164,31 +162,30 @@ export default function StepPersonalDetails() {
             <div>
               <Label>Timezone *</Label>
               <Select
+                options={TIMEZONES}
                 value={personal.timezone}
-                onChange={(event) => updatePersonal({ timezone: event.target.value })}
+                onChange={(value) => updatePersonal({ timezone: value })}
                 onBlur={() => setTouched((prev) => ({ ...prev, timezone: true }))}
-              >
-                {TIMEZONES.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
+                className="bg-transparent"
+                disabled={TIMEZONES.length === 0}
+              />
+              {touched.timezone && !personal.timezone && (
+                <p className="mt-2 text-xs text-rose-300">Timezone helps us personalize reminders.</p>
+              )}
             </div>
 
             <div>
               <Label>Preferred language *</Label>
               <Select
+                options={LANGUAGES}
                 value={personal.language}
-                onChange={(event) => updatePersonal({ language: event.target.value })}
+                onChange={(value) => updatePersonal({ language: value })}
                 onBlur={() => setTouched((prev) => ({ ...prev, language: true }))}
-              >
-                {LANGUAGES.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
+                className="bg-transparent"
+              />
+              {touched.language && !personal.language && (
+                <p className="mt-2 text-xs text-rose-300">Language is required.</p>
+              )}
             </div>
           </div>
         </div>

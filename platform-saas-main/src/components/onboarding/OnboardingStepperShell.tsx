@@ -17,11 +17,9 @@ type OnboardingStepperShellProps = {
 };
 
 export default function OnboardingStepperShell({ children }: OnboardingStepperShellProps) {
-  const { stepIndex, emailVerified, goToPrevStep } = useOnboardingStore((state) => ({
-    stepIndex: state.stepIndex,
-    emailVerified: state.emailVerified,
-    goToPrevStep: state.goToPrevStep,
-  }));
+  const stepIndex = useOnboardingStore((state) => state.stepIndex);
+  const emailVerified = useOnboardingStore((state) => state.emailVerified);
+  const goToPrevStep = useOnboardingStore((state) => state.goToPrevStep);
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-6xl gap-8 px-6 py-12 lg:py-16">

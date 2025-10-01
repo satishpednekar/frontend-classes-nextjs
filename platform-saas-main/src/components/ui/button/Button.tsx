@@ -6,7 +6,7 @@ interface ButtonProps {
   variant?: "primary" | "outline"; // Button variant
   startIcon?: ReactNode; // Icon before the text
   endIcon?: ReactNode; // Icon after the text
-  onClick?: () => void; // Click handler
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void; // Click handler
   disabled?: boolean; // Disabled state
   loading?: boolean; // Loading state
   className?: string; // Additional classes
@@ -44,7 +44,7 @@ const Button: React.FC<ButtonProps> = ({
       } ${variantClasses[variant]} ${
         disabled || loading ? "cursor-not-allowed opacity-50" : ""
       }`}
-      onClick={onClick}
+      onClick={disabled || loading ? undefined : onClick}
       disabled={disabled || loading}
     >
       {loading ? (

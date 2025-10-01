@@ -38,17 +38,13 @@ const EXPERIENCE_LABELS: Record<number, string> = {
 };
 
 export default function StepCompletion() {
-  const { personal, professional, learning, planTier, submitStep, goToPrevStep, isLoading } = useOnboardingStore(
-    (state) => ({
-      personal: state.personal,
-      professional: state.professional,
-      learning: state.learning,
-      planTier: state.planTier,
-      submitStep: state.submitStep,
-      goToPrevStep: state.goToPrevStep,
-      isLoading: state.isLoading,
-    }),
-  );
+  const personal = useOnboardingStore((state) => state.personal);
+  const professional = useOnboardingStore((state) => state.professional);
+  const learning = useOnboardingStore((state) => state.learning);
+  const planTier = useOnboardingStore((state) => state.planTier);
+  const submitStep = useOnboardingStore((state) => state.submitStep);
+  const goToPrevStep = useOnboardingStore((state) => state.goToPrevStep);
+  const isLoading = useOnboardingStore((state) => state.isLoading);
 
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
