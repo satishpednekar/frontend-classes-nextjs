@@ -1347,6 +1347,7 @@ export async function GET(req: Request) {
 - `IMPLEMENTATION_SUMMARY.md` - Feature overview
 - `PROJECT_ARCHITECTURE.md` - Architecture details
 - `project-detail.md` - Project overview
+- `eng-rules.md` - Engineering guardrails (Next.js, Zustand, SSE patterns)
 
 ### **Design Assets**
 - Figma: [Link when available]
