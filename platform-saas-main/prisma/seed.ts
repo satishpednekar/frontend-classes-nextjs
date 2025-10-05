@@ -209,39 +209,6 @@ async function main() {
     });
   }
   
-  // Pro Plus User permissions (inherits pro permissions + manage subscriptions)
-  const proPlusPerms = await prisma.permission.findMany({
-    where: {
-      name: {
-        in: [
-          'content:read',
-          'premium:access',
-          'learning_path:create',
-          'learning_path:update',
-          'learning_path:share',
-          'content:publish',
-          'subscription:manage',
-        ],
-      },
-    },
-  });
-
-  for (const permission of proPlusPerms) {
-    await prisma.rolePermission.upsert({
-      where: {
-        roleId_permissionId: {
-          roleId: proPlusRole.id,
-          permissionId: permission.id,
-        },
-      },
-      update: {},
-      create: {
-        roleId: proPlusRole.id,
-        permissionId: permission.id,
-      },
-    });
-  }
-
   // Moderator permissions
   const moderatorPerms = await prisma.permission.findMany({
     where: {
@@ -300,7 +267,7 @@ async function main() {
   }
 
   // Pro Plus permissions (inherits pro permissions + subscription management)
-  const proPlusPerms = await prisma.permission.findMany({
+  const proPlusPermsExtended = await prisma.permission.findMany({
     where: {
       name: {
         in: [
@@ -316,7 +283,7 @@ async function main() {
     },
   });
 
-  for (const permission of proPlusPerms) {
+  for (const permission of proPlusPermsExtended) {
     await prisma.rolePermission.upsert({
       where: {
         roleId_permissionId: {

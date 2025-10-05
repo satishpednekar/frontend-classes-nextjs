@@ -3,6 +3,7 @@
 import React from "react";
 
 import { useOnboardingStore } from "@/stores/onboarding-store";
+import { useOnboardingModal } from "@/context/OnboardingModalContext";
 
 const STEPS = [
   { label: "Personal", description: "Tell us about you" },
@@ -20,6 +21,7 @@ export default function OnboardingStepperShell({ children }: OnboardingStepperSh
   const stepIndex = useOnboardingStore((state) => state.stepIndex);
   const emailVerified = useOnboardingStore((state) => state.emailVerified);
   const goToPrevStep = useOnboardingStore((state) => state.goToPrevStep);
+  const { close } = useOnboardingModal();
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-6xl gap-8 px-6 py-12 lg:py-16">
@@ -82,6 +84,13 @@ export default function OnboardingStepperShell({ children }: OnboardingStepperSh
               Verify your email to unlock all features.
             </div>
           )}
+          <button
+            type="button"
+            onClick={close}
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:border-white/30 hover:bg-white/10"
+          >
+            Close
+          </button>
         </div>
 
         <div className="flex flex-1 flex-col rounded-3xl border border-white/10 bg-white/10/5 p-6 shadow-2xl shadow-black/30 backdrop-blur">

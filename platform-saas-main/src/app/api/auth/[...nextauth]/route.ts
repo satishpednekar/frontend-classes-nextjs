@@ -156,6 +156,7 @@ async function enrichToken(token: AnyRecord) {
   token.tier = dbUser.subscription?.tier ?? SubscriptionTier.FREE;
   token.onboardingCompleted = dbUser.profile?.onboardingCompleted ?? false;
   token.onboardingStep = dbUser.profile?.onboardingStep ?? 0;
+  token.onboardingDismissed = dbUser.profile?.onboardingDismissed ?? false;
   token.userLoaded = true;
 
   return token;
@@ -305,6 +306,7 @@ export const authOptions: NextAuthOptions = {
       sessionRecord.tier = tier;
       sessionRecord.onboardingCompleted = Boolean(token.onboardingCompleted);
       sessionRecord.onboardingStep = token.onboardingStep ?? 0;
+      sessionRecord.onboardingDismissed = Boolean(token.onboardingDismissed);
 
       return session;
     },

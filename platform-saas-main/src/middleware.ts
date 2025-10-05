@@ -6,6 +6,7 @@ import type { AnyRecord } from "@/types/utility";
 const PUBLIC_PATHS = ["/signin", "/signup", "/error"];
 const ONBOARDING_PATH = "/onboarding";
 const DASHBOARD_PATH = "/dashboard";
+const ONBOARDING_DISMISSED_COOKIE = "onboarding-dismissed";
 
 const PROTECTED_PREFIXES = [
   "/",
@@ -54,6 +55,7 @@ export async function middleware(req: NextRequest) {
   const onboardingCompleted = Boolean(token.onboardingCompleted);
   const onboardingStep = Number(token.onboardingStep ?? 0);
   const isAdmin = (token.role as string | undefined) === "admin";
+  const onboardingDismissed = Boolean(req.cookies.get(ONBOARDING_DISMISSED_COOKIE)?.value);
 
   if (pathname.startsWith(ADMIN_PREFIX) && !isAdmin) {
     return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
@@ -61,23 +63,28 @@ export async function middleware(req: NextRequest) {
 
   const requiresAuth = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
-  if (pathname === "/" && !onboardingCompleted) {
+  if (pathname === "/" && !onboardingCompleted && !onboardingDismissed) {
     const onboardingUrl = new URL(ONBOARDING_PATH, req.url);
     if (onboardingStep > 0) onboardingUrl.searchParams.set("step", onboardingStep.toString());
     return NextResponse.redirect(onboardingUrl);
   }
 
-  if (requiresAuth && !onboardingCompleted && !pathname.startsWith(ONBOARDING_PATH)) {
+  if (
+    requiresAuth &&
+    !onboardingCompleted &&
+    !onboardingDismissed &&
+    !pathname.startsWith(ONBOARDING_PATH)
+  ) {
     const onboardingUrl = new URL(ONBOARDING_PATH, req.url);
     if (onboardingStep > 0) onboardingUrl.searchParams.set("step", onboardingStep.toString());
     return NextResponse.redirect(onboardingUrl);
   }
 
-  if (pathname.startsWith(ONBOARDING_PATH) && onboardingCompleted) {
+  if (pathname.startsWith(ONBOARDING_PATH) && (onboardingCompleted || onboardingDismissed)) {
     return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
   }
 
-  if (pathname === "/" && onboardingCompleted) {
+  if (pathname === "/" && (onboardingCompleted || onboardingDismissed)) {
     return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
   }
 

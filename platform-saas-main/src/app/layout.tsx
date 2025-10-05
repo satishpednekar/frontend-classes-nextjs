@@ -3,6 +3,7 @@ import './globals.css';
 
 import { SidebarProvider } from '@/context/SidebarContext';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { OnboardingModalProvider } from '@/context/OnboardingModalContext';
 import Script from 'next/script';
 
 const outfit = Outfit({
@@ -40,7 +41,9 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning className={`${outfit.className} dark:bg-gray-900`}>
         <ThemeProvider>
-          <SidebarProvider>{children}</SidebarProvider>
+          <SidebarProvider>
+            <OnboardingModalProvider>{children}</OnboardingModalProvider>
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>

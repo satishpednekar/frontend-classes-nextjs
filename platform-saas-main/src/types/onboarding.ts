@@ -59,6 +59,7 @@ export interface OnboardingUserSummary {
 export interface OnboardingContextPayload {
   onboardingStep: number;
   onboardingCompleted: boolean;
+  onboardingDismissed?: boolean;
   personal: OnboardingPersonalDetails;
   professional: OnboardingProfessionalDetails;
   learning: OnboardingLearningPreferences;
@@ -93,6 +94,12 @@ export type OnboardingStepPayload =
   | {
       step: 5;
       complete: true;
+    }
+  | {
+      step: "dismiss";
+    }
+  | {
+      step: "resume";
     };
 
 export type OnboardingUpdateRequest = OnboardingStepPayload & {

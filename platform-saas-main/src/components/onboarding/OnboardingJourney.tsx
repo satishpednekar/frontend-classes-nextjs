@@ -24,6 +24,9 @@ export default function OnboardingJourney() {
   const isLoading = useOnboardingStore((state) => state.isLoading);
   const error = useOnboardingStore((state) => state.error);
   const loadInitialContext = useOnboardingStore((state) => state.loadInitialContext);
+  const onboardingCompleted = useOnboardingStore((state) => state.onboardingCompleted);
+  const onboardingDismissed = useOnboardingStore((state) => state.onboardingDismissed);
+  const contextReady = useOnboardingStore((state) => state.contextReady);
 
   const hasLoadedRef = useRef(false);
 
@@ -33,8 +36,12 @@ export default function OnboardingJourney() {
     void loadInitialContext();
   }, [loadInitialContext]);
 
-  if (isLoading) {
+  if (!contextReady || isLoading) {
     return <OnboardingLoadingState />;
+  }
+
+  if (onboardingCompleted || onboardingDismissed) {
+    return null;
   }
 
   if (error) {

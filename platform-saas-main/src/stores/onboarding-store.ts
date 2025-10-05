@@ -30,6 +30,9 @@ interface OnboardingState {
   learning: OnboardingLearningPreferences;
   emailVerified: boolean;
   userName: string | null;
+  onboardingCompleted: boolean | null;
+  onboardingDismissed: boolean | null;
+  contextReady: boolean;
   setStepIndex: (index: StepIndex) => void;
   setPlanTier: (tier: SubscriptionPlanTier) => void;
   updatePersonal: (input: OnboardingPersonalDetails) => void;
@@ -39,6 +42,8 @@ interface OnboardingState {
   submitStep: () => Promise<void>;
   goToPrevStep: () => void;
   goToNextStep: () => void;
+  markDismissed: () => Promise<void>;
+  markVisible: () => Promise<void>;
 }
 
 const STEP_KEYS: OnboardingStepKey[] = ["personal", "professional", "learning", "plan", "complete"];
@@ -127,6 +132,9 @@ export const useOnboardingStore = create<OnboardingState>()(
     learning: DEFAULT_LEARNING,
     emailVerified: false,
     userName: null,
+    onboardingCompleted: null,
+    onboardingDismissed: null,
+    contextReady: false,
 
     setStepIndex: (index) => set({ stepIndex: index }),
 
@@ -166,9 +174,16 @@ export const useOnboardingStore = create<OnboardingState>()(
           plans: data.plans,
           emailVerified: data.user.emailVerified,
           userName: data.user.name ?? data.personal.displayName ?? null,
+          onboardingCompleted: data.onboardingCompleted,
+          onboardingDismissed: data.onboardingDismissed ?? false,
+          contextReady: true,
         });
       } catch (error) {
-        set({ isLoading: false, error: (error as Error).message || "Unable to load onboarding" });
+        set({
+          isLoading: false,
+          error: (error as Error).message || "Unable to load onboarding",
+          contextReady: true,
+        });
       }
     },
 
@@ -210,11 +225,47 @@ export const useOnboardingStore = create<OnboardingState>()(
           plans: updated.plans,
           emailVerified: updated.user.emailVerified,
           userName: updated.user.name ?? updated.personal.displayName ?? null,
+          onboardingCompleted: updated.onboardingCompleted,
+          onboardingDismissed: updated.onboardingDismissed ?? false,
+          contextReady: true,
         });
       } catch (error) {
         set({ isLoading: false, error: (error as Error).message || "Unable to save progress" });
         throw error;
       }
+    },
+    markDismissed: async () => {
+      const updated = await patchStep({ step: "dismiss" });
+      set({
+        onboardingDismissed: true,
+        onboardingCompleted: updated.onboardingCompleted,
+        contextReady: true,
+        stepIndex: toIndex(updated.onboardingStep),
+        personal: updated.personal,
+        professional: updated.professional,
+        learning: updated.learning,
+        planTier: updated.planTier,
+        plans: updated.plans,
+        emailVerified: updated.user.emailVerified,
+        userName: updated.user.name ?? updated.personal.displayName ?? null,
+      });
+    },
+    markVisible: async () => {
+      if (!get().onboardingDismissed) return;
+      const updated = await patchStep({ step: "resume" });
+      set({
+        onboardingDismissed: false,
+        onboardingCompleted: updated.onboardingCompleted,
+        contextReady: true,
+        stepIndex: toIndex(updated.onboardingStep),
+        personal: updated.personal,
+        professional: updated.professional,
+        learning: updated.learning,
+        planTier: updated.planTier,
+        plans: updated.plans,
+        emailVerified: updated.user.emailVerified,
+        userName: updated.user.name ?? updated.personal.displayName ?? null,
+      });
     },
   }))
 );

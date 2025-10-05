@@ -147,6 +147,7 @@ model UserProfile {
   lastActiveDate       DateTime?
   onboardingCompleted  Boolean      @default(false)
   onboardingStep       Int          @default(0)
+  onboardingDismissed  Boolean      @default(false)
   
   // Privacy & Communication
   isProfilePublic      Boolean      @default(false)

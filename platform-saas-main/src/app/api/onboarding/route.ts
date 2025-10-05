@@ -79,6 +79,9 @@ const PLAN_OPTIONS: OnboardingPlanOption[] = [
   },
 ];
 
+const ONBOARDING_DISMISSED_COOKIE = "onboarding-dismissed";
+const ONBOARDING_COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
+
 async function getSessionOrThrow(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -173,7 +176,38 @@ async function buildOnboardingContext(userId: string): Promise<OnboardingContext
       image: dbUser.image,
       emailVerified: Boolean(dbUser.emailVerified),
     },
+    onboardingDismissed: dbUser.profile?.onboardingDismissed ?? false,
   };
+}
+
+function buildContextResponse(data: OnboardingContextPayload) {
+  const response = NextResponse.json<OnboardingContextResponse>({ success: true, data });
+
+  const secure = process.env.NODE_ENV === "production";
+
+  if (data.onboardingDismissed) {
+    response.cookies.set({
+      name: ONBOARDING_DISMISSED_COOKIE,
+      value: "1",
+      httpOnly: true,
+      sameSite: "lax",
+      secure,
+      maxAge: ONBOARDING_COOKIE_MAX_AGE,
+      path: "/",
+    });
+  } else {
+    response.cookies.set({
+      name: ONBOARDING_DISMISSED_COOKIE,
+      value: "",
+      httpOnly: true,
+      sameSite: "lax",
+      secure,
+      maxAge: 0,
+      path: "/",
+    });
+  }
+
+  return response;
 }
 
 async function ensureRole(roleName: "free_user" | "pro_user" | "pro_plus_user" | "admin") {
@@ -409,7 +443,7 @@ async function handleStepUpdate(userId: string, payload: OnboardingUpdateRequest
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -420,7 +454,7 @@ export async function GET() {
     }
 
     const context = await buildOnboardingContext(session.user.id as string);
-    return NextResponse.json<OnboardingContextResponse>({ success: true, data: context });
+    return buildContextResponse(context);
   } catch (error) {
     if (error instanceof Response) {
       return NextResponse.json<OnboardingContextResponse>(
@@ -464,10 +498,32 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    if (body.step === "dismiss") {
+      await prisma.userProfile.update({
+        where: { id: profile.id },
+        data: {
+          onboardingDismissed: true,
+        },
+      });
+      const updated = await buildOnboardingContext(userId);
+      return buildContextResponse(updated);
+    }
+
+    if (body.step === "resume") {
+      await prisma.userProfile.update({
+        where: { id: profile.id },
+        data: {
+          onboardingDismissed: false,
+        },
+      });
+      const updated = await buildOnboardingContext(userId);
+      return buildContextResponse(updated);
+    }
+
     await handleStepUpdate(userId, body, profile.id);
 
     const updated = await buildOnboardingContext(userId);
-    return NextResponse.json<OnboardingContextResponse>({ success: true, data: updated });
+    return buildContextResponse(updated);
   } catch (error) {
     if (error instanceof Response) {
       return NextResponse.json<OnboardingContextResponse>(

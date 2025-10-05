@@ -131,6 +131,7 @@ CREATE TABLE "user_profiles" (
     "lastActiveDate" TIMESTAMP(3),
     "onboardingCompleted" BOOLEAN NOT NULL DEFAULT false,
     "onboardingStep" INTEGER NOT NULL DEFAULT 0,
+    "onboardingDismissed" BOOLEAN NOT NULL DEFAULT false,
     "isProfilePublic" BOOLEAN NOT NULL DEFAULT false,
     "allowAnalytics" BOOLEAN NOT NULL DEFAULT true,
     "allowMarketing" BOOLEAN NOT NULL DEFAULT false,
