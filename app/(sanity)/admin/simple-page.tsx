@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { ShareIcon, UserGroupIcon, TrendingUpIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+import { ShareIcon, UserGroupIcon, ArrowTrendingUpIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 
 interface AnalyticsData {
   totalClicks: number;
@@ -113,7 +113,7 @@ export default function SimpleAdminPage() {
           <StatCard
             title="Avg Performance Score"
             value={`${analyticsData?.averagePerformanceScore || 0}%`}
-            icon={TrendingUpIcon}
+            icon={ArrowTrendingUpIcon}
             color="purple"
           />
           <StatCard

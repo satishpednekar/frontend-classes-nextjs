@@ -66,9 +66,9 @@ This document tracks the implementation progress of the Frontendpedia SaaS Platf
 #### Infrastructure & Utilities
 - ✅ **Prisma Client Singleton** (`src/lib/prisma.ts`)
   - Development/production environment handling
-  - Query logging in development
-  - Connection pooling best practices
-  - Prevents database connection exhaustion
+- Query logging in development
+- Connection pooling best practices
+- Prevents database connection exhaustion
 
 - ✅ **TypeScript Type Definitions**
   - `src/types/user-profile.ts` - User profile types
@@ -215,7 +215,7 @@ This is a **comprehensive, fully-functional 5-step onboarding system** that coll
 
 ```
 platform-saas-main/
-├── prisma/
+    ├── prisma/
 │   ├── schema.prisma              ✅ Complete (30+ tables)
 │   ├── seed.ts                    ✅ Complete (roles, permissions, achievements)
 │   └── migrations/

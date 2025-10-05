@@ -5,7 +5,7 @@ import {
   ChartBarIcon,
   ShareIcon,
   UserGroupIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   EyeIcon,
   MagnifyingGlassIcon,
   HeartIcon,
@@ -333,7 +333,7 @@ export default function AdminDashboard() {
               <StatCard
                 title="Avg Performance Score"
                 value={`${analyticsData?.averagePerformanceScore || 0}%`}
-                icon={TrendingUpIcon}
+                icon={ArrowTrendingUpIcon}
                 color="purple"
               />
               <StatCard
@@ -366,7 +366,7 @@ export default function AdminDashboard() {
               <StatCard
                 title="Avg Engagement"
                 value={brandMentionData?.averageEngagement || 0}
-                icon={TrendingUpIcon}
+                icon={ArrowTrendingUpIcon}
                 color="orange"
               />
             </>
