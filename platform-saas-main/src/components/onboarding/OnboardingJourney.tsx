@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 import OnboardingStepperShell from "@/components/onboarding/OnboardingStepperShell";
 import StepPersonalDetails from "@/components/onboarding/steps/StepPersonalDetails";
@@ -29,12 +30,20 @@ export default function OnboardingJourney() {
   const contextReady = useOnboardingStore((state) => state.contextReady);
 
   const hasLoadedRef = useRef(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (hasLoadedRef.current) return;
     hasLoadedRef.current = true;
     void loadInitialContext();
   }, [loadInitialContext]);
+
+  useEffect(() => {
+    if (!contextReady) return;
+    if (onboardingCompleted || onboardingDismissed) {
+      router.replace("/");
+    }
+  }, [contextReady, onboardingCompleted, onboardingDismissed, router]);
 
   if (!contextReady || isLoading) {
     return <OnboardingLoadingState />;

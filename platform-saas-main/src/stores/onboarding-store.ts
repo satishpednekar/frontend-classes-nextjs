@@ -249,6 +249,7 @@ export const useOnboardingStore = create<OnboardingState>()(
         emailVerified: updated.user.emailVerified,
         userName: updated.user.name ?? updated.personal.displayName ?? null,
       });
+      return updated;
     },
     markVisible: async () => {
       if (!get().onboardingDismissed) return;
@@ -266,6 +267,7 @@ export const useOnboardingStore = create<OnboardingState>()(
         emailVerified: updated.user.emailVerified,
         userName: updated.user.name ?? updated.personal.displayName ?? null,
       });
+      return updated;
     },
   }))
 );

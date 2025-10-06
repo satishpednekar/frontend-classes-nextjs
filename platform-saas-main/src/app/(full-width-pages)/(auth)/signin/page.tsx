@@ -1,19 +1,8 @@
-import { redirect } from "next/navigation";
 import React from "react";
 
 import { AuthCard } from "@/components/auth/AuthCard";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import type { AnyRecord } from "@/types/utility";
 
-export default async function SignIn() {
-  const session = await getServerSession(authOptions);
-  if (session?.user?.id) {
-    const sessionUser = session.user as AnyRecord;
-    const onboardingCompleted = Boolean(sessionUser.onboardingCompleted);
-    redirect(onboardingCompleted ? "/dashboard" : "/onboarding");
-  }
-
+export default function SignIn() {
   return (
     <div className="grid items-stretch gap-6 lg:grid-cols-2 xl:gap-8">
       <div>

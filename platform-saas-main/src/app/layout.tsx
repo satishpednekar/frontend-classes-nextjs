@@ -4,6 +4,7 @@ import './globals.css';
 import { SidebarProvider } from '@/context/SidebarContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { OnboardingModalProvider } from '@/context/OnboardingModalContext';
+import { RedirectLoopProtection } from '@/components/common/RedirectLoopProtection';
 import Script from 'next/script';
 
 const outfit = Outfit({
@@ -42,7 +43,10 @@ export default function RootLayout({
       <body suppressHydrationWarning className={`${outfit.className} dark:bg-gray-900`}>
         <ThemeProvider>
           <SidebarProvider>
-            <OnboardingModalProvider>{children}</OnboardingModalProvider>
+            <OnboardingModalProvider>
+              <RedirectLoopProtection />
+              {children}
+            </OnboardingModalProvider>
           </SidebarProvider>
         </ThemeProvider>
       </body>

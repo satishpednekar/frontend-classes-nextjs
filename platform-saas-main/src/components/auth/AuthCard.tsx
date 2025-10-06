@@ -29,6 +29,44 @@ export function AuthCard({ mode, defaultCallbackUrl }: AuthCardProps) {
 
   const callbackUrl = search?.get("callbackUrl") || defaultCallbackUrl || "/";
 
+  const resolvedCallbackUrl = useMemo(() => {
+    const defaultDestination = "/onboarding";
+    const fallbackOrigin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:3001";
+
+    if (!callbackUrl) {
+      return defaultDestination;
+    }
+
+    try {
+      const parsedUrl = new URL(callbackUrl, fallbackOrigin);
+
+      const disallowedPaths = [
+        "/signin",
+        "/signup",
+        "/api/auth/signin",
+        "/api/auth/callback/google",
+        "/api/auth/callback/github",
+      ];
+
+      const isDisallowed = disallowedPaths.some((path) => parsedUrl.pathname === path || parsedUrl.pathname.startsWith(path));
+      const isWellKnown = parsedUrl.pathname.startsWith("/.well-known");
+
+      if (parsedUrl.origin !== fallbackOrigin || isDisallowed || isWellKnown) {
+        return defaultDestination;
+      }
+
+      return `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}` || defaultDestination;
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("[AuthCard] Invalid callbackUrl", { callbackUrl, error });
+      }
+      return defaultDestination;
+    }
+  }, [callbackUrl]);
+
   const heading = mode === "signin" ? "Sign in" : "Create your account";
   const subheading =
     mode === "signin"
@@ -45,9 +83,9 @@ export function AuthCard({ mode, defaultCallbackUrl }: AuthCardProps) {
 
   const handleOAuthSignIn = useCallback(
     (provider: "google" | "github") => {
-      void signIn(provider, { callbackUrl });
+      void signIn(provider, { callbackUrl: resolvedCallbackUrl });
     },
-    [callbackUrl],
+    [resolvedCallbackUrl],
   );
 
   const handleSubmit = useCallback(
@@ -60,7 +98,7 @@ export function AuthCard({ mode, defaultCallbackUrl }: AuthCardProps) {
           redirect: false,
           email: emailNormalized,
           password,
-          callbackUrl,
+          callbackUrl: resolvedCallbackUrl,
         });
 
         if (response?.error) {
@@ -68,12 +106,12 @@ export function AuthCard({ mode, defaultCallbackUrl }: AuthCardProps) {
           return;
         }
 
-        router.push(callbackUrl);
+        void router.push(resolvedCallbackUrl);
       } finally {
         setIsSubmitting(false);
       }
     },
-    [callbackUrl, email, password, router],
+    [resolvedCallbackUrl, email, password, router],
   );
 
   const oauthButtons = useMemo(

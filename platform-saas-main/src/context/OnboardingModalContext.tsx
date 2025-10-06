@@ -23,6 +23,7 @@ export function OnboardingModalProvider({ children }: { children: React.ReactNod
   const pathname = usePathname();
 
   const [isOpen, setIsOpen] = useState(() => false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!contextReady) return;
@@ -35,30 +36,39 @@ export function OnboardingModalProvider({ children }: { children: React.ReactNod
   }, [contextReady, onboardingCompleted, onboardingDismissed]);
 
   const open = () => {
-    void markVisible().catch(() => setIsOpen(false));
-    setIsOpen(true);
+    setIsSubmitting(true);
+    void markVisible()
+      .then(() => {
+        setIsOpen(true);
+      })
+      .catch(() => {
+        setIsOpen(false);
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
   const close = () => {
+    setIsSubmitting(true);
     void markDismissed()
       .then(() => {
         setIsOpen(false);
         if (pathname?.startsWith("/onboarding")) {
-          router.replace("/dashboard");
+          router.replace("/");
         }
       })
       .catch(() => {
         setIsOpen(true);
-      });
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
   const value = useMemo<OnboardingModalContextValue>(
     () => ({
-      isOpen,
+      isOpen: isOpen && !isSubmitting,
       open,
       close,
     }),
-    [isOpen],
+    [isOpen, isSubmitting],
   );
 
   return <OnboardingModalContext.Provider value={value}>{children}</OnboardingModalContext.Provider>;

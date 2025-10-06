@@ -310,6 +310,28 @@ export const authOptions: NextAuthOptions = {
 
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      const effectiveBase = process.env.NEXTAUTH_URL ?? baseUrl;
+
+      try {
+        const parsedUrl = new URL(url, effectiveBase);
+        const pathname = parsedUrl.pathname;
+
+        // Block loops back to auth pages
+        if (pathname === "/signin" || pathname === "/signup") {
+          return `${effectiveBase}/onboarding`;
+        }
+
+        if (parsedUrl.origin === effectiveBase) {
+          return parsedUrl.toString();
+        }
+
+        return `${effectiveBase}/`;
+      } catch (error) {
+        console.error("[NextAuth redirect] Failed to resolve redirect URL", { url, baseUrl, error });
+        return `${effectiveBase}/`;
+      }
+    },
   },
 };
 

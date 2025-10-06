@@ -3,7 +3,6 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import type { AnyRecord } from "@/types/utility";
 
-const PUBLIC_PATHS = ["/signin", "/signup", "/error"];
 const ONBOARDING_PATH = "/onboarding";
 const DASHBOARD_PATH = "/dashboard";
 const ONBOARDING_DISMISSED_COOKIE = "onboarding-dismissed";
@@ -40,11 +39,38 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
+  const token = (await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  })) as AnyRecord | null;
+
+  // Handle auth pages (signin/signup) - redirect authenticated users away
+  if (pathname.startsWith("/signin") || pathname.startsWith("/signup")) {
+    if (token) {
+      // User is authenticated, redirect them away from auth pages
+      const onboardingCompleted = Boolean(token.onboardingCompleted);
+      const onboardingDismissed = Boolean(req.cookies.get(ONBOARDING_DISMISSED_COOKIE)?.value);
+      
+      // Determine where to send them
+      if (onboardingCompleted || onboardingDismissed) {
+        return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
+      } else {
+        const onboardingUrl = new URL(ONBOARDING_PATH, req.url);
+        const onboardingStep = Number(token.onboardingStep ?? 0);
+        if (onboardingStep > 0) {
+          onboardingUrl.searchParams.set("step", onboardingStep.toString());
+        }
+        return NextResponse.redirect(onboardingUrl);
+      }
+    }
+    // Not authenticated, allow access to signin/signup
     return NextResponse.next();
   }
 
-  const token = (await getToken({ req })) as AnyRecord | null;
+  // Allow access to error pages without auth
+  if (pathname.startsWith("/error") || pathname.startsWith("/error-page")) {
+    return NextResponse.next();
+  }
 
   if (!token) {
     const signInUrl = new URL(authConfig.pages.signIn, req.url);
