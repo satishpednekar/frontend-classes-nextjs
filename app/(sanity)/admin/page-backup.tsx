@@ -382,29 +382,32 @@ export default function AdminDashboard() {
                 activeTab === 'analytics' 
                   ? analyticsData?.platformBreakdown || {}
                   : brandMentionData?.platformBreakdown || {}
-              ).map(([platform, count]) => (
-                <div key={platform} className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
-                    {platform}
-                  </span>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full"
-                        style={{
-                          width: `${(count / (activeTab === 'analytics' 
-                            ? (analyticsData?.totalClicks || 1)
-                            : (brandMentionData?.totalMentions || 1)
-                          )) * 100}%`
-                        }}
-                      ></div>
-                    </div>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white w-8 text-right">
-                      {count}
+              ).map(([platform, count]) => {
+                const numCount = Number(count);
+                return (
+                  <div key={platform} className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
+                      {platform}
                     </span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div
+                          className="bg-blue-600 h-2 rounded-full"
+                          style={{
+                            width: `${(numCount / (activeTab === 'analytics' 
+                              ? (analyticsData?.totalClicks || 1)
+                              : (brandMentionData?.totalMentions || 1)
+                            )) * 100}%`
+                          }}
+                        ></div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white w-8 text-right">
+                        {numCount}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </ChartCard>
 
@@ -415,37 +418,39 @@ export default function AdminDashboard() {
                 activeTab === 'analytics' 
                   ? analyticsData?.deviceBreakdown || {}
                   : brandMentionData?.sentimentBreakdown || {}
-              ).map(([item, count]) => (
-                <div key={item} className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
-                    {item}
-                  </span>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full ${
-                          activeTab === 'analytics' 
-                            ? 'bg-green-600'
-                            : item === 'positive' 
-                              ? 'bg-green-600' 
-                              : item === 'negative' 
-                                ? 'bg-red-600' 
-                                : 'bg-yellow-600'
-                        }`}
-                        style={{
-                          width: `${(count / (activeTab === 'analytics' 
-                            ? (analyticsData?.totalClicks || 1)
-                            : (brandMentionData?.totalMentions || 1)
-                          )) * 100}%`
-                        }}
+              ).map(([item, count]) => {
+                const numCount = Number(count);
+                return (
+                  <div key={item} className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
+                      {item}
+                    </span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${
+                            activeTab === 'analytics' 
+                              ? 'bg-green-600'
+                              : item === 'positive' 
+                                ? 'bg-green-600' 
+                                : item === 'negative' 
+                                  ? 'bg-red-600' 
+                                  : 'bg-yellow-600'
+                          }`}
+                          style={{
+                            width: `${(numCount / (activeTab === 'analytics' 
+                              ? (analyticsData?.totalClicks || 1)
+                              : (brandMentionData?.totalMentions || 1)
+                            )) * 100}%`
+                          }}
                       ></div>
                     </div>
                     <span className="text-sm font-medium text-gray-900 dark:text-white w-8 text-right">
-                      {count}
+                      {numCount}
                     </span>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </ChartCard>
         </div>
