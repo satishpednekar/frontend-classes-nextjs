@@ -319,7 +319,7 @@ export const authOptions: NextAuthOptions = {
 
         // Block loops back to auth pages
         if (pathname === "/signin" || pathname === "/signup") {
-          return `${effectiveBase}/onboarding`;
+          return `${effectiveBase}/`;
         }
 
         if (parsedUrl.origin === effectiveBase) {

@@ -3,22 +3,7 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import type { AnyRecord } from "@/types/utility";
 
-const ONBOARDING_PATH = "/onboarding";
 const DASHBOARD_PATH = "/dashboard";
-const ONBOARDING_DISMISSED_COOKIE = "onboarding-dismissed";
-
-const PROTECTED_PREFIXES = [
-  "/",
-  "/dashboard",
-  "/learning-path",
-  "/my-content",
-  "/feed",
-  "/profile",
-  "/settings",
-  "/notes",
-  "/bookmarks",
-];
-
 const ADMIN_PREFIX = "/admin";
 
 const authConfig = {
@@ -47,21 +32,8 @@ export async function middleware(req: NextRequest) {
   // Handle auth pages (signin/signup) - redirect authenticated users away
   if (pathname.startsWith("/signin") || pathname.startsWith("/signup")) {
     if (token) {
-      // User is authenticated, redirect them away from auth pages
-      const onboardingCompleted = Boolean(token.onboardingCompleted);
-      const onboardingDismissed = Boolean(req.cookies.get(ONBOARDING_DISMISSED_COOKIE)?.value);
-      
-      // Determine where to send them
-      if (onboardingCompleted || onboardingDismissed) {
-        return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
-      } else {
-        const onboardingUrl = new URL(ONBOARDING_PATH, req.url);
-        const onboardingStep = Number(token.onboardingStep ?? 0);
-        if (onboardingStep > 0) {
-          onboardingUrl.searchParams.set("step", onboardingStep.toString());
-        }
-        return NextResponse.redirect(onboardingUrl);
-      }
+      // User is authenticated, redirect to main page
+      return NextResponse.redirect(new URL("/", req.url));
     }
     // Not authenticated, allow access to signin/signup
     return NextResponse.next();
@@ -78,41 +50,15 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(signInUrl);
   }
 
-  const onboardingCompleted = Boolean(token.onboardingCompleted);
-  const onboardingStep = Number(token.onboardingStep ?? 0);
   const isAdmin = (token.role as string | undefined) === "admin";
-  const onboardingDismissed = Boolean(req.cookies.get(ONBOARDING_DISMISSED_COOKIE)?.value);
 
+  // Admin route protection
   if (pathname.startsWith(ADMIN_PREFIX) && !isAdmin) {
     return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
   }
 
-  const requiresAuth = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-
-  if (pathname === "/" && !onboardingCompleted && !onboardingDismissed) {
-    const onboardingUrl = new URL(ONBOARDING_PATH, req.url);
-    if (onboardingStep > 0) onboardingUrl.searchParams.set("step", onboardingStep.toString());
-    return NextResponse.redirect(onboardingUrl);
-  }
-
-  if (
-    requiresAuth &&
-    !onboardingCompleted &&
-    !onboardingDismissed &&
-    !pathname.startsWith(ONBOARDING_PATH)
-  ) {
-    const onboardingUrl = new URL(ONBOARDING_PATH, req.url);
-    if (onboardingStep > 0) onboardingUrl.searchParams.set("step", onboardingStep.toString());
-    return NextResponse.redirect(onboardingUrl);
-  }
-
-  if (pathname.startsWith(ONBOARDING_PATH) && (onboardingCompleted || onboardingDismissed)) {
-    return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
-  }
-
-  if (pathname === "/" && (onboardingCompleted || onboardingDismissed)) {
-    return NextResponse.redirect(new URL(DASHBOARD_PATH, req.url));
-  }
+  // Allow access to all authenticated routes - no forced onboarding redirects
+  // The main page will show a button to complete profile if needed
 
   return NextResponse.next();
 }

@@ -30,7 +30,7 @@ export function AuthCard({ mode, defaultCallbackUrl }: AuthCardProps) {
   const callbackUrl = search?.get("callbackUrl") || defaultCallbackUrl || "/";
 
   const resolvedCallbackUrl = useMemo(() => {
-    const defaultDestination = "/onboarding";
+    const defaultDestination = "/";
     const fallbackOrigin =
       typeof window !== "undefined"
         ? window.location.origin
