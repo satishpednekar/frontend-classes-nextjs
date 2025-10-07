@@ -449,8 +449,9 @@ export default function AdminDashboard() {
                       {numCount}
                     </span>
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
             </div>
           </ChartCard>
         </div>
