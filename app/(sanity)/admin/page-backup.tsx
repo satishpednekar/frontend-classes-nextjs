@@ -443,15 +443,15 @@ export default function AdminDashboard() {
                               : (brandMentionData?.totalMentions || 1)
                             )) * 100}%`
                           }}
-                      ></div>
+                        ></div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white w-8 text-right">
+                        {numCount}
+                      </span>
                     </div>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white w-8 text-right">
-                      {numCount}
-                    </span>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           </ChartCard>
         </div>
